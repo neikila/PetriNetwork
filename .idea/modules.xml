@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/petri.iml" filepath="$PROJECT_DIR$/.idea/modules/petri.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/petri-build.iml" filepath="$PROJECT_DIR$/.idea/modules/petri-build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/petrinetwork.iml" filepath="$PROJECT_DIR$/.idea/modules/petrinetwork.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/petrinetwork-build.iml" filepath="$PROJECT_DIR$/.idea/modules/petrinetwork-build.iml" />
     </modules>
   </component>
 </project>

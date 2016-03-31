@@ -19,7 +19,8 @@ class PetriNetCanvas (val model: Model) extends Component {
   placeViews.indices.foreach(index => {
     val pos = placeViews(index).pos
     val rad = placeViews(index).radius
-    pos.move(index * 2 * rad, 0)
+    val delta = 20
+    pos.move(index * 2 * rad + rad + index * delta, rad)
   })
 
   override def paintComponent(g : Graphics2D) {
@@ -59,7 +60,7 @@ class PetriNetCanvas (val model: Model) extends Component {
 
   def mouseDraggedHandler(p: Point) = {
     println(s"Dragged to point ${p.x}, ${p.y}")
-    target.pos.move(p.x - target.radius, p.y - target.radius)
+    target.pos.move(p.x, p.y)
     update()
   }
 }

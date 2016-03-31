@@ -1,5 +1,7 @@
 import java.io.File
 
+import UI.MainWindow
+
 import scala.xml.XML
 import _root_.XML.XMLParser
 import model._
@@ -25,8 +27,10 @@ object Main {
 
     petriNet.printState()
 
-    while (petriNet.nextByPriority(true).equals(TransactionApplyResult.Success)) {
-      petriNet.printState()
-    }
+//    while (petriNet.nextByPriority(true).equals(TransactionApplyResult.Success)) {
+//      petriNet.printState()
+//    }
+
+    MainWindow(petriNet)
   }
 }

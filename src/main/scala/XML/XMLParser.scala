@@ -14,7 +14,7 @@ class XMLParser (val file: File){
 
   val xml = XML.loadFile(file)
 
-  def places = {
+  lazy val places = {
     (xml \\ PLACES \ PLACE).map((place) =>
       new Place(
         (place \ ID).text.toInt,
@@ -23,10 +23,12 @@ class XMLParser (val file: File){
     ).toList
   }
 
-  def transactions = {
+  lazy val transactions = {
     (xml \\ TRANSACTIONS \ TRANSACTION).map((transaction) =>
       new Transaction(
-        (transaction \ ID).text.toInt, {
+        (transaction \ ID).text.toInt,
+        util.Try((transaction \ PRIORITY).text.toInt).getOrElse(0),
+        {
           if ((transaction \ DESC).length == 0)
             None
           else
@@ -36,7 +38,7 @@ class XMLParser (val file: File){
     ).toList
   }
 
-  def arcs(places: Seq[Place], transactions: Seq[Transaction]) = {
+  lazy val arcs = {
     (xml \\ ARCS \ ARC).map((arc) => {
       val from = (arc \ FROM).text.toInt
       val to = (arc \ TO).text.toInt
@@ -72,5 +74,6 @@ object XMLParser {
   val AMOUNT = "amount"
   val FROM = "from"
   val TO = "to"
+  val PRIORITY = "priority"
 }
 

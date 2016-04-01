@@ -9,7 +9,7 @@ import scala.swing.{Graphics2D, Point}
 /**
   * Created by neikila.
   */
-class PlaceView (val place: Place, var color: Color = Color.BLUE, var pos: Point = new Point(0, 0)) {
+class PlaceView (val place: Place, var color: Color = Color.BLUE, var pos: Point = new Point(0, 0)) extends UIElement {
   val radius: Int = 40
 
   def paint(g: Graphics2D) = {
@@ -30,7 +30,7 @@ class PlaceView (val place: Place, var color: Color = Color.BLUE, var pos: Point
     )
   }
 
-  def isIn(p: Point) = {
+  override def isIn(p: Point) = {
     pos.distanceSq(p) <= radius * radius
   }
 }

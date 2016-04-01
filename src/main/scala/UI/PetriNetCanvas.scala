@@ -56,7 +56,7 @@ class PetriNetCanvas (val model: Model) extends Component {
     case MouseDragged(_, p, _) => mouseDraggedHandler(p)
   }
 
-  var target: Option[PlaceView] = None
+  var target: Option[UIElement] = None
   def mousePressedHandler(p: Point) = {
     println(s"Mouse clicked at ${p.x}, ${p.y}")
     target = placeViews.find(_.isIn(p))

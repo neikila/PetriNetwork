@@ -5,7 +5,7 @@ import java.awt.Color._
 
 import model.Model
 
-import scala.swing.event.{MouseDragged, MouseMoved, MouseReleased, MouseClicked}
+import scala.swing.event._
 import scala.swing.{Point, Graphics2D, Component}
 
 /**
@@ -33,7 +33,8 @@ class PetriNetCanvas (val model: Model) extends Component {
         placeView.paint(g)
     })
 
-    target.paint(g)
+    if (target.isDefined)
+      target.get.paint(g)
   }
 
   def update() = {
@@ -48,19 +49,25 @@ class PetriNetCanvas (val model: Model) extends Component {
   listenTo(mouse.clicks)
   listenTo(mouse.moves)
   reactions += {
-    case MouseClicked(_, p, _, _, _) => mouseClickHandler(p)
+    case MousePressed(_, p, _, _, _) => mouseClickHandler(p)
     case MouseReleased(_, p, _, _, _) => println(s"Mouse released at ${p.x}, ${p.y}")
     case MouseDragged(_, p, _) => mouseDraggedHandler(p)
   }
-  var target: PlaceView = placeViews.head
+
+  var target: Option[PlaceView] = None
   def mouseClickHandler(p: Point) = {
     println(s"Mouse clicked at ${p.x}, ${p.y}")
-    target = placeViews.head
+    target = placeViews.find(_.isIn(p))
+    println(s"Target = $target")
   }
 
   def mouseDraggedHandler(p: Point) = {
-    println(s"Dragged to point ${p.x}, ${p.y}")
-    target.pos.move(p.x, p.y)
+    target match {
+      case Some(placeView: PlaceView) =>
+        println(s"Dragged to point ${p.x}, ${p.y}")
+        placeView.pos.move(p.x, p.y)
+      case _ => None
+    }
     update()
   }
 }

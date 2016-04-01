@@ -29,6 +29,10 @@ class PlaceView (val place: Place, var color: Color = Color.BLUE, var pos: Point
       pos.y + rect.getHeight / 2 toInt
     )
   }
+
+  def isIn(p: Point) = {
+    pos.distanceSq(p) <= radius * radius
+  }
 }
 
 object PlaceView {

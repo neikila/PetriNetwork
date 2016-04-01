@@ -28,13 +28,15 @@ class PetriNetCanvas (val model: Model) extends Component {
     g.setColor(Color.white)
     g.fillRect(0,0, d.width, d.height)
 
-    placeViews.foreach(placeView => {
-      if (!placeView.equals(target))
-        placeView.paint(g)
-    })
-
-    if (target.isDefined)
-      target.get.paint(g)
+    target match {
+      case Some(targetPV) =>
+        placeViews.foreach(placeView => {
+          if (!placeView.equals(targetPV))
+            placeView.paint(g)
+        })
+        targetPV.paint(g)
+      case _ => placeViews.foreach(_.paint(g))
+    }
   }
 
   def update() = {
@@ -49,13 +51,13 @@ class PetriNetCanvas (val model: Model) extends Component {
   listenTo(mouse.clicks)
   listenTo(mouse.moves)
   reactions += {
-    case MousePressed(_, p, _, _, _) => mouseClickHandler(p)
+    case MousePressed(_, p, _, _, _) => mousePressedHandler(p)
     case MouseReleased(_, p, _, _, _) => println(s"Mouse released at ${p.x}, ${p.y}")
     case MouseDragged(_, p, _) => mouseDraggedHandler(p)
   }
 
   var target: Option[PlaceView] = None
-  def mouseClickHandler(p: Point) = {
+  def mousePressedHandler(p: Point) = {
     println(s"Mouse clicked at ${p.x}, ${p.y}")
     target = placeViews.find(_.isIn(p))
     println(s"Target = $target")

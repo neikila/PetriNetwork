@@ -33,6 +33,8 @@ class PlaceView (val place: Place, var color: Color = Color.BLUE, override val p
   override def isIn(p: Point) = {
     pos.distanceSq(p) <= radius * radius
   }
+
+  override def getPointForArc(): Point = pos
 }
 
 object PlaceView {

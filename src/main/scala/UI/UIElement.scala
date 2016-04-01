@@ -11,4 +11,6 @@ trait UIElement {
   def isIn(p: Point): Boolean
 
   def paint(g: Graphics2D): Unit
+
+  def getPointForArc(): Point
 }

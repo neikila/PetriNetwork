@@ -3,7 +3,7 @@ package UI
 import java.awt.{Font, Color}
 import java.awt.Color._
 
-import model.Model
+import model.{Place, Model}
 
 import scala.swing.event._
 import scala.swing.{Point, Graphics2D, Component}
@@ -29,10 +29,24 @@ class PetriNetCanvas (val model: Model) extends Component {
     pos.move(PlaceView.radius * 2 * (index + 1) + delta * index + delta / 2, 2 * PlaceView.radius + TransactionView.height / 2)
   })
 
+  val arcViews: List[ArcView] =
+    model.arcsPlace2Tr.map(p2t =>
+      new ArcView(
+        placeViews.find(_.asInstanceOf[PlaceView].place.id == p2t.from.id).get,
+        trViews.find(_.asInstanceOf[TransactionView].transaction.id == p2t.to.id).get
+      )
+    ) ::: model.arcsTr2Place.map(t2p => new ArcView(
+      trViews.find(_.asInstanceOf[TransactionView].transaction.id == t2p.from.id).get,
+      placeViews.find(_.asInstanceOf[PlaceView].place.id == t2p.to.id).get
+    )
+    )
+
   override def paintComponent(g : Graphics2D) {
     val d = size
     g.setColor(Color.white)
     g.fillRect(0,0, d.width, d.height)
+
+    arcViews.foreach(_.paint(g))
 
     target match {
       case Some(targetPV) =>
@@ -59,7 +73,7 @@ class PetriNetCanvas (val model: Model) extends Component {
   listenTo(mouse.moves)
   reactions += {
     case MousePressed(_, p, _, _, _) => mousePressedHandler(p)
-    case MouseReleased(_, p, _, _, _) => println(s"Mouse released at ${p.x}, ${p.y}")
+    case MouseReleased(_, p, _, _, _) => target = None; update(); println(s"Mouse released at ${p.x}, ${p.y}")
     case MouseDragged(_, p, _) => mouseDraggedHandler(p)
   }
 

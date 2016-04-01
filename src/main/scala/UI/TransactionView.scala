@@ -25,6 +25,8 @@ class TransactionView (val transaction: Transaction, override val pos: Point = n
   override def isIn(p: Point): Boolean = {
     rectangle.contains(p)
   }
+
+  override def getPointForArc(): Point = pos
 }
 
 object TransactionView {

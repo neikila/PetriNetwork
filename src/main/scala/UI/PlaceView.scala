@@ -25,8 +25,8 @@ class PlaceView (val place: Place, var color: Color = Color.BLUE, var pos: Point
     val rect = fontMetrics.getStringBounds(marksAmount, g)
 
     g.drawString(marksAmount,
-      pos.x - rect.getWidth / 2 toInt,
-      pos.y + rect.getHeight / 2 toInt
+      (pos.x - rect.getWidth / 2).toInt,
+      (pos.y + rect.getHeight / 2).toInt
     )
   }
 

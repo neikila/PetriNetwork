@@ -1,11 +1,11 @@
 package UI
 
-import java.awt.Graphics2D
-
 import _root_.model.Model
 
 import scala.concurrent.{Future, ExecutionContext}
 import scala.swing._
+import scala._
+import Swing._
 
 import ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
@@ -20,7 +20,7 @@ class MainWindow (var model: Model) extends MainFrame {
 
   preferredSize = new Dimension(640, 480)
 
-  contents = new GridBagPanel {
+  contents = new GridBagPanel { grid =>
     def constraints(x: Int, y: Int,
                     gridWidth: Int = 1, gridHeight: Int = 1,
                     weightX: Double = 0.0, weightY: Double = 0.0,
@@ -47,10 +47,19 @@ class MainWindow (var model: Model) extends MainFrame {
         case Success(_) => petriView.update(); println("Next finished")
         case Failure(error) => println("A error has occured: " + error.getMessage)
       }
-    },
-      constraints(2, 0))
-    add(new TextField { columns = 32 },
-      constraints(1, 0, weightX=1.0, fill=GridBagPanel.Fill.Horizontal))
+    }, constraints(2, 0))
+
+    val textField = new TextField { columns = 32 }
+
+    val openFileBtn: Button = Button("Open file") {
+      val fileChooser = new FileChooser()
+      fileChooser.showOpenDialog(grid)
+      textField.text = fileChooser.selectedFile.getName
+      repaint()
+    }
+
+    add(openFileBtn, constraints(2, 1, fill = GridBagPanel.Fill.Horizontal))
+    add(textField, constraints(1, 0, weightX=1.0, fill=GridBagPanel.Fill.Horizontal))
     add(petriView,
       constraints(1, 1, gridHeight=3, weightY = 1,
         fill=GridBagPanel.Fill.Both))

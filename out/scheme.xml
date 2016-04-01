@@ -2,24 +2,25 @@
     <places>
         <place>
             <id>0</id>
-            <count>3</count>
+            <count>10</count>
         </place>
         <place>
             <id>1</id>
-            <count>3</count>
+            <count>0</count>
         </place>
         <place>
             <id>2</id>
+            <count>1</count>
         </place>
     </places>
     <transactions>
         <transaction>
             <id>0</id>
-            <description>Initial</description>
+            <description>Entrance</description>
         </transaction>
         <transaction>
             <id>1</id>
-            <description>End</description>
+            <description>Finish</description>
             <priority>1</priority>
         </transaction>
     </transactions>
@@ -27,20 +28,20 @@
         <arc>
             <from>0</from>
             <to>0</to>
-            <direction>t2p</direction>
+            <direction>p2t</direction>
         </arc>
         <arc>
-            <from>1</from>
+            <from>2</from>
             <to>0</to>
             <direction>p2t</direction>
         </arc>
         <arc>
             <from>0</from>
             <to>1</to>
-            <direction>p2t</direction>
+            <direction>t2p</direction>
         </arc>
         <arc>
-            <from>0</from>
+            <from>1</from>
             <to>1</to>
             <direction>p2t</direction>
         </arc>

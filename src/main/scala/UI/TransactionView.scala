@@ -9,9 +9,9 @@ import scala.swing.{Graphics2D, Point}
 /**
   * Created by neikila.
   */
-class TransactionView (val transaction: Transaction, val pos: Point = new Point(0, 0)) extends UIElement {
-  val width = 6
-  val height = 20
+class TransactionView (val transaction: Transaction, override val pos: Point = new Point(0, 0)) extends UIElement {
+  import TransactionView._
+
   var color = Color.BLACK
 
   def rectangle = new Rectangle(pos.x - width / 2, pos.y - height / 2, width, height)
@@ -25,4 +25,9 @@ class TransactionView (val transaction: Transaction, val pos: Point = new Point(
   override def isIn(p: Point): Boolean = {
     rectangle.contains(p)
   }
+}
+
+object TransactionView {
+  val width = 20
+  val height = 60
 }

@@ -12,5 +12,5 @@ trait UIElement {
 
   def paint(g: Graphics2D): Unit
 
-  def getPointForArc(): Point
+  def getPointForArc(second: Point): Point
 }

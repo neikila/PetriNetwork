@@ -2,8 +2,10 @@ import java.io.File
 
 import UI.MainWindow
 
+import scala.swing.Point
 import scala.xml.XML
 import _root_.XML.XMLParser
+import _root_.UI.Helper
 import model._
 
 import scala.collection.immutable.HashMap

@@ -34,7 +34,10 @@ class PlaceView (val place: Place, var color: Color = Color.BLUE, override val p
     pos.distanceSq(p) <= radius * radius
   }
 
-  override def getPointForArc(): Point = pos
+  override def getPointForArc(second: Point): Point = {
+    val k = radius / pos.distance(second)
+    Helper.vectorDiv(pos, second, k)
+  }
 }
 
 object PlaceView {

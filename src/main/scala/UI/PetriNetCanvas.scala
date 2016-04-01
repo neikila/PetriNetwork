@@ -35,10 +35,11 @@ class PetriNetCanvas (val model: Model) extends Component {
         placeViews.find(_.asInstanceOf[PlaceView].place.id == p2t.from.id).get,
         trViews.find(_.asInstanceOf[TransactionView].transaction.id == p2t.to.id).get
       )
-    ) ::: model.arcsTr2Place.map(t2p => new ArcView(
-      trViews.find(_.asInstanceOf[TransactionView].transaction.id == t2p.from.id).get,
-      placeViews.find(_.asInstanceOf[PlaceView].place.id == t2p.to.id).get
-    )
+    ) :::
+      model.arcsTr2Place.map(t2p => new ArcView(
+        trViews.find(_.asInstanceOf[TransactionView].transaction.id == t2p.from.id).get,
+        placeViews.find(_.asInstanceOf[PlaceView].place.id == t2p.to.id).get
+      )
     )
 
   override def paintComponent(g : Graphics2D) {

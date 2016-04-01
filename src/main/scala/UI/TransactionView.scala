@@ -26,7 +26,20 @@ class TransactionView (val transaction: Transaction, override val pos: Point = n
     rectangle.contains(p)
   }
 
-  override def getPointForArc(): Point = pos
+  override def getPointForArc(second: Point): Point = {
+    val rect = rectangle
+    val dist = pos.distance(second)
+    getPoint(second, dist, (0.0 to dist by 0.5).find(k => {
+      !rect.contains(getPoint(second, dist, k))
+    }).getOrElse(dist))
+//    vectorDiv(pos, second, dist, (0.0 to dist by 0.5).find(k => {
+//      !rect.contains(vectorDiv(pos, second, dist, k))
+//    }).getOrElse(dist))
+  }
+
+  def getPoint(second: Point, dist: Double, k: Double) = {
+    new Point((pos.x + (second.x - pos.x) * k / dist).toInt, (pos.y + (second.y - pos.y) * k / dist).toInt)
+  }
 }
 
 object TransactionView {

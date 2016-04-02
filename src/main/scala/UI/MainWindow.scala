@@ -1,5 +1,8 @@
 package UI
 
+import java.io.File
+
+import XML.XMLView
 import _root_.model.Model
 
 import scala.concurrent.{Future, ExecutionContext}
@@ -53,9 +56,15 @@ class MainWindow (var model: Model) extends MainFrame {
 
     val openFileBtn: Button = Button("Open file") {
       val fileChooser = new FileChooser()
-      fileChooser.showOpenDialog(grid)
-      textField.text = fileChooser.selectedFile.getName
-      repaint()
+      fileChooser.peer.setCurrentDirectory(new File("out"))
+      fileChooser.showSaveDialog(grid)
+      if (fileChooser.selectedFile != null) {
+        val filename = fileChooser.selectedFile.getName
+        textField.text = filename
+        println(s"Filename = ${fileChooser.selectedFile.getCanonicalPath}")
+        new XMLView(petriView).save(fileChooser.selectedFile)
+        repaint()
+      }
     }
 
     add(openFileBtn, constraints(2, 1, fill = GridBagPanel.Fill.Horizontal))

@@ -15,7 +15,7 @@ class ArcView(val from: UIElement, val to: UIElement) {
   def paint(g: Graphics2D) = {
     val from = this.from.getPointForArc(this.to.pos)
     val to = this.to.getPointForArc(this.from.pos)
-    g.setColor(Color.GREEN)
+    g.setColor(Color.BLACK)
     g.drawLine(from.x, from.y, to.x, to.y)
 
     drawLine(to, from, 15, g)

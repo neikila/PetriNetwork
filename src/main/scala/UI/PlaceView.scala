@@ -9,7 +9,7 @@ import scala.swing.{Graphics2D, Point}
 /**
   * Created by neikila.
   */
-class PlaceView (val place: Place, var color: Color = Color.BLUE, override val pos: Point = new Point(0, 0)) extends UIElement {
+class PlaceView (val place: Place, override var color: Color = Color.BLUE, override val pos: Point = new Point(0, 0)) extends UIElement {
 
   def pos(k: Double): Point =
     new Point((pos.x / k).toInt, (pos.y / k).toInt)
@@ -17,7 +17,6 @@ class PlaceView (val place: Place, var color: Color = Color.BLUE, override val p
   override def paint(g: Graphics2D, k: Double = 1, camera: Point = new Point(0, 0)) = {
 
     g.setColor(color)
-    println(s"k = $k")
     g.fillOval(pos(k).x - radius(k).toInt, pos(k).y - radius(k).toInt, 2 * radius(k).toInt, 2 * radius(k).toInt)
 
     g.setColor(Color.BLACK)
@@ -41,6 +40,8 @@ class PlaceView (val place: Place, var color: Color = Color.BLUE, override val p
     val k = radius() / pos.distance(second)
     Helper.vectorDiv(pos, second, k)
   }
+
+  override def id: Int = place.id
 
   def radius(k: Double = 1) = {
     PlaceView.radius / k

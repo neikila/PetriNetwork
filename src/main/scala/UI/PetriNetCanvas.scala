@@ -2,9 +2,11 @@ package UI
 
 import java.awt.{Color, Font}
 import java.awt.Color._
+import java.io.File
 import javax.swing.SwingUtilities
 
-import model.{Model, Place}
+import XML.XMLView
+import model.Model
 
 import scala.swing.event._
 import scala.swing.{Component, Graphics2D, Point}
@@ -12,28 +14,39 @@ import scala.swing.{Component, Graphics2D, Point}
 /**
   * Created by neikila.
   */
-class PetriNetCanvas (val model: Model) extends Component {
+class PetriNetCanvas (val model: Model, var file: Option[File] = None) extends Component {
   import PetriNetCanvas._
 
   var k: Double = 1
   var camera: Point = new Point(size.width / 2, size.height / 2)
 
-  val placeViews: List[UIElement] = model.places.map(new PlaceView(_, nextColor))
+  var placeViews: List[UIElement] = model.places.map(new PlaceView(_, nextColor))
+  var trViews: List[UIElement] = model.transactions.map(new TransactionView(_))
 
-  val delta = 20
-  placeViews.indices.foreach(index => {
-    val pos = placeViews(index).pos
-    val rad = PlaceView.radius
-    pos.move(index * 2 * rad + rad + index * delta, rad)
-  })
+  file match {
+    case Some(file: File) => initView(file)
+    case _ => initView()
+  }
 
-  val trViews: List[UIElement] = model.transactions.map(new TransactionView(_))
-  trViews.indices.foreach(index => {
-    val pos = trViews(index).pos
-    pos.move(PlaceView.radius * 2 * (index + 1) + delta * index + delta / 2, 2 * PlaceView.radius + TransactionView.height / 2)
-  })
+  def initView() = {
+    val delta = 20
+    placeViews.indices.foreach(index => {
+      val pos = placeViews(index).pos
+      val rad = PlaceView.radius
+      pos.move(index * 2 * rad + rad + index * delta, rad)
+    })
 
-  val arcViews: List[ArcView] =
+    trViews.indices.foreach(index => {
+      val pos = trViews(index).pos
+      pos.move(PlaceView.radius * 2 * (index + 1) + delta * index + delta / 2, 2 * PlaceView.radius + TransactionView.height / 2)
+    })
+  }
+  def initView(fileView: File) = {
+    val xmlView = new XMLView(this)
+    xmlView.parse(fileView)
+  }
+
+  var arcViews: List[ArcView] =
     model.arcsPlace2Tr.map(p2t =>
       new ArcView(
         placeViews.find(_.asInstanceOf[PlaceView].place.id == p2t.from.id).get,
@@ -119,7 +132,6 @@ class PetriNetCanvas (val model: Model) extends Component {
 }
 
 object PetriNetCanvas {
-
   val colors: List[Color] = {
     BLUE :: RED :: CYAN :: GREEN :: ORANGE ::Nil
   }

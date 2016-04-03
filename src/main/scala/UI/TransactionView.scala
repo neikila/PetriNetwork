@@ -12,7 +12,7 @@ import scala.swing.{Graphics2D, Point}
 class TransactionView (val transaction: Transaction, override val pos: Point = new Point(0, 0)) extends UIElement {
   import TransactionView._
 
-  var color = Color.BLACK
+  override var color = Color.BLACK
 
   def pos(k: Double): Point =
     new Point((pos.x / k).toInt, (pos.y / k).toInt)
@@ -42,6 +42,8 @@ class TransactionView (val transaction: Transaction, override val pos: Point = n
 //      !rect.contains(vectorDiv(pos, second, dist, k))
 //    }).getOrElse(dist))
   }
+
+  override def id: Int = transaction.id
 
   def getPoint(second: Point, dist: Double, k: Double) = {
     new Point((pos.x + (second.x - pos.x) * k / dist).toInt, (pos.y + (second.y - pos.y) * k / dist).toInt)

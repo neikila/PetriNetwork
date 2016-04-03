@@ -19,7 +19,7 @@ import scala.util.{Failure, Success}
 class MainWindow (var model: Model) extends MainFrame {
 
   title = "Petri net"
-  val petriView = new PetriNetCanvas(model)
+  val petriView = new PetriNetCanvas(model, Some(new File("out", "test.xml")))
 
   preferredSize = new Dimension(640, 480)
 
@@ -50,6 +50,7 @@ class MainWindow (var model: Model) extends MainFrame {
         case Success(_) => petriView.update(); println("Next finished")
         case Failure(error) => println("A error has occured: " + error.getMessage)
       }
+      println(new XMLView(petriView).xmlView.toString())
     }, constraints(2, 0))
 
     val textField = new TextField { columns = 32 }

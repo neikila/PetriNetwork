@@ -14,11 +14,17 @@ class TransactionView (val transaction: Transaction, override val pos: Point = n
 
   var color = Color.BLACK
 
-  def rectangle = new Rectangle(pos.x - width / 2, pos.y - height / 2, width, height)
+  def pos(k: Double): Point =
+    new Point((pos.x / k).toInt, (pos.y / k).toInt)
 
-  override def paint(g: Graphics2D): Unit = {
+  def rectangle = new Rectangle(pos.x - width / 2, pos.y - height / 2, width, height)
+  def rectangle(k: Double = 1) = new Rectangle(
+    pos(k).x - (width / k / 2).toInt, pos(k).y - (height / k / 2).toInt,
+    (width / k).toInt, (height / k).toInt)
+
+  override def paint(g: Graphics2D, k: Double = 1, camera: Point = new Point(0, 0)): Unit = {
     g.setColor(color)
-    val rectangle = this.rectangle
+    val rectangle = this.rectangle(k)
     g.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height)
   }
 

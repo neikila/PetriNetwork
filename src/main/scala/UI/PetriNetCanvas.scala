@@ -14,6 +14,9 @@ import scala.swing.{Point, Graphics2D, Component}
 class PetriNetCanvas (val model: Model) extends Component {
   import PetriNetCanvas._
 
+  var k: Double = 1
+  var camera: Point = new Point(size.width / 2, size.height / 2)
+
   val placeViews: List[UIElement] = model.places.map(new PlaceView(_, nextColor))
 
   val delta = 20
@@ -47,17 +50,17 @@ class PetriNetCanvas (val model: Model) extends Component {
     g.setColor(Color.white)
     g.fillRect(0,0, d.width, d.height)
 
-    arcViews.foreach(_.paint(g))
+    arcViews.foreach(_.paint(g, k))
 
     target match {
       case Some(targetPV) =>
         (placeViews ::: trViews).foreach(view => {
           if (!view.equals(targetPV))
-            view.paint(g)
+            view.paint(g, k, camera)
         })
-        targetPV.paint(g)
+        targetPV.paint(g, k, camera)
       case _ =>
-        (placeViews ::: trViews).foreach(_.paint(g))
+        (placeViews ::: trViews).foreach(_.paint(g, k ,camera))
     }
   }
 
@@ -72,10 +75,12 @@ class PetriNetCanvas (val model: Model) extends Component {
 
   listenTo(mouse.clicks)
   listenTo(mouse.moves)
+  listenTo(mouse.wheel)
   reactions += {
     case MousePressed(_, p, _, _, _) => mousePressedHandler(p)
     case MouseReleased(_, p, _, _, _) => target = None; update(); println(s"Mouse released at ${p.x}, ${p.y}")
     case MouseDragged(_, p, _) => mouseDraggedHandler(p)
+    case e: MouseWheelMoved => wheelRotationHandler(e)
   }
 
   var target: Option[UIElement] = None
@@ -92,6 +97,20 @@ class PetriNetCanvas (val model: Model) extends Component {
         element.pos.move(p.x, p.y)
       case _ => None
     }
+    update()
+  }
+
+  def wheelRotationHandler(e: MouseWheelMoved) = {
+    if (k >= 1) {
+      if (k == 1 && e.rotation < 0)
+        k += e.rotation.toDouble / 10
+      else
+        k += e.rotation.toDouble / 4
+    } else {
+      if (k > 0.2 && e.rotation < 0 || e.rotation > 0)
+        k += (e.rotation.toDouble / 10)
+    }
+    println(s"Wheel moved: ${e.rotation}. k = $k")
     update()
   }
 }

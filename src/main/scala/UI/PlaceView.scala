@@ -10,37 +10,45 @@ import scala.swing.{Graphics2D, Point}
   * Created by neikila.
   */
 class PlaceView (val place: Place, var color: Color = Color.BLUE, override val pos: Point = new Point(0, 0)) extends UIElement {
-  import PlaceView._
 
-  def paint(g: Graphics2D) = {
+  def pos(k: Double): Point =
+    new Point((pos.x / k).toInt, (pos.y / k).toInt)
+
+  override def paint(g: Graphics2D, k: Double = 1, camera: Point = new Point(0, 0)) = {
 
     g.setColor(color)
-    g.fillOval(pos.x - radius, pos.y - radius, 2 * radius, 2 * radius)
+    println(s"k = $k")
+    g.fillOval(pos(k).x - radius(k).toInt, pos(k).y - radius(k).toInt, 2 * radius(k).toInt, 2 * radius(k).toInt)
 
     g.setColor(Color.BLACK)
-    g.setFont(serifFont)
+    g.setFont(PlaceView.serifFont(k))
     val fontMetrics = g.getFontMetrics
     val marksAmount = place.counter.toString
 
     val rect = fontMetrics.getStringBounds(marksAmount, g)
 
     g.drawString(marksAmount,
-      (pos.x - rect.getWidth / 2).toInt,
-      (pos.y + rect.getHeight / 4).toInt
+      (pos(k).x - rect.getWidth / 2).toInt,
+      (pos(k).y + rect.getHeight / 4).toInt
     )
   }
 
   override def isIn(p: Point) = {
-    pos.distanceSq(p) <= radius * radius
+    pos.distanceSq(p) <= radius() * radius()
   }
 
   override def getPointForArc(second: Point): Point = {
-    val k = radius / pos.distance(second)
+    val k = radius() / pos.distance(second)
     Helper.vectorDiv(pos, second, k)
+  }
+
+  def radius(k: Double = 1) = {
+    PlaceView.radius / k
   }
 }
 
 object PlaceView {
   val radius: Int = 40
   val serifFont = new Font("Serif", Font.BOLD, 24)
+  def serifFont(k: Double) = new Font("Serif", Font.BOLD, (24 / k).toInt)
 }

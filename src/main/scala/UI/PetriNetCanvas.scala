@@ -1,12 +1,13 @@
 package UI
 
-import java.awt.{Font, Color}
+import java.awt.{Color, Font}
 import java.awt.Color._
+import javax.swing.SwingUtilities
 
-import model.{Place, Model}
+import model.{Model, Place}
 
 import scala.swing.event._
-import scala.swing.{Point, Graphics2D, Component}
+import scala.swing.{Component, Graphics2D, Point}
 
 /**
   * Created by neikila.
@@ -77,16 +78,18 @@ class PetriNetCanvas (val model: Model) extends Component {
   listenTo(mouse.moves)
   listenTo(mouse.wheel)
   reactions += {
-    case MousePressed(_, p, _, _, _) => mousePressedHandler(p)
+    case e: MousePressed => mousePressedHandler(e)
     case MouseReleased(_, p, _, _, _) => target = None; update(); println(s"Mouse released at ${p.x}, ${p.y}")
     case MouseDragged(_, p, _) => mouseDraggedHandler(p)
     case e: MouseWheelMoved => wheelRotationHandler(e)
   }
 
   var target: Option[UIElement] = None
-  def mousePressedHandler(p: Point) = {
-    println(s"Mouse clicked at ${p.x}, ${p.y}")
-    target = (placeViews ::: trViews).find(_.isIn(p))
+  def mousePressedHandler(e: MousePressed) = {
+    println(s"Mouse clicked at ${e.point.x}, ${e.point.y}. ${e.modifiers}")
+    println(SwingUtilities.isLeftMouseButton(e.peer))
+    println(SwingUtilities.isRightMouseButton(e.peer))
+    target = (placeViews ::: trViews).find(_.isIn(e.point))
     println(s"Target = $target")
   }
 

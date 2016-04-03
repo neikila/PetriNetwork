@@ -13,10 +13,9 @@ import scala.util.{Failure, Success}
 /**
   * Created by neikila.
   */
-class MainWindow (var model: Model) extends MainFrame {
+class MainWindow (model: Model) extends MainFrame {
 
   title = "Petri net"
-//  var petriView = new PetriNetCanvas(model, Some(new File("out", "test.xml")))
 
   preferredSize = new Dimension(640, 480)
 
@@ -59,27 +58,31 @@ class MainWindow (var model: Model) extends MainFrame {
       if (fileChooser.selectedFile != null) {
         val filename = fileChooser.selectedFile.getName
         textField.text = filename
-        XMLComplex.openProject(fileChooser.selectedFile, petriView)
-        println(s"Filename = ${fileChooser.selectedFile.getCanonicalPath}")
-        repaint()
+        Future {
+          XMLComplex.openProject(fileChooser.selectedFile, petriView)
+        } onComplete {
+          case Success(_) =>
+            println(s"Filename = ${fileChooser.selectedFile.getCanonicalPath}")
+            repaint()
+          case Failure(error) =>
+            println("A error has occured: " + error.getMessage)
+        }
       }
     }
 
     add(new Label("Label @ (0,0)") {border=Swing.EtchedBorder(Swing.Lowered) },
       constraints(0, 0, gridHeight=2, fill=GridBagPanel.Fill.Both))
     add(Button("Next by priority") {
-      val f = Future {
-        model.nextByPriority(true)
-      }
-
-      f onComplete {
+      Future {
+        petriView.model.nextByPriority(true)
+      } onComplete {
         case Success(_) =>
           petriView.update()
           println("Next finished")
         case Failure(error) =>
           println("A error has occured: " + error.getMessage)
       }
-      println(new XMLView(petriView).xmlView.toString())
+      println(new XMLView(petriView).xmlView.toString)
     }, constraints(2, 0))
     add(saveFileBtn, constraints(2, 1, fill = GridBagPanel.Fill.Horizontal))
     add(openFileBtn, constraints(2, 2, fill = GridBagPanel.Fill.Horizontal))
@@ -92,8 +95,8 @@ class MainWindow (var model: Model) extends MainFrame {
 }
 
 object MainWindow {
-  def apply(model: Model) = {
-    val ui = new MainWindow(model)
+  def apply() = {
+    val ui = new MainWindow(new Model)
     ui.visible = true
     ui
   }

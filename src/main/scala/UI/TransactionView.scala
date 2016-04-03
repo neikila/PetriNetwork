@@ -23,8 +23,8 @@ class TransactionView (val transaction: Transaction, override val pos: Point = n
     (width / k).toInt, (height / k).toInt)
 
   override def paint(g: Graphics2D, k: Double = 1, camera: Point = new Point(0, 0)): Unit = {
-    if (transaction.isPossible)
-      g.setColor(Color.GREEN)
+    if (transaction.isPossible && color.equals(Color.BLACK))
+      g.setColor(activeColor)
     else
       g.setColor(color)
     val rectangle = this.rectangle(k)
@@ -56,4 +56,6 @@ class TransactionView (val transaction: Transaction, override val pos: Point = n
 object TransactionView {
   val width = 20
   val height = 60
+
+  val activeColor = Color.GREEN
 }

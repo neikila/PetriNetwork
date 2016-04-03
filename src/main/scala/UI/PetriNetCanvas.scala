@@ -3,13 +3,13 @@ package UI
 import java.awt.{Color, Font}
 import java.awt.Color._
 import java.io.File
-import javax.swing.SwingUtilities
+import javax.swing.{JPopupMenu, SwingUtilities}
 
 import XML.XMLView
-import model.{Model, TransactionApplyResult}
+import model.{Model, P2T, T2P, TransactionApplyResult}
 
 import scala.swing.event._
-import scala.swing.{Component, Graphics2D, Point}
+import scala.swing.{Action, Button, Component, Graphics2D, Menu, MenuItem, Point, PopupMenu, RadioMenuItem}
 
 /**
   * Created by neikila.
@@ -20,7 +20,7 @@ class PetriNetCanvas (var model: Model, var file: Option[File] = None) extends C
   var k: Double = 1
   var camera: Point = new Point(size.width / 2, size.height / 2)
 
-  var placeViews: List[UIElement] = model.places.map(new PlaceView(_, nextColor))
+  var placeViews: List[UIElement] = model.places.map(new PlaceView(_, placeDefColor))
   var trViews: List[UIElement] = model.transactions.map(new TransactionView(_))
   var arcViews: List[ArcView] = getArcsViewFromModel
 
@@ -56,16 +56,18 @@ class PetriNetCanvas (var model: Model, var file: Option[File] = None) extends C
   initView()
 
   def getArcsViewFromModel =
-    model.arcsPlace2Tr.map(p2t =>
-      new ArcView(
-        placeViews.find(_.asInstanceOf[PlaceView].place.id == p2t.from.id).get,
-        trViews.find(_.asInstanceOf[TransactionView].transaction.id == p2t.to.id).get
-      )
-    ) :::
-      model.arcsTr2Place.map(t2p => new ArcView(
-        trViews.find(_.asInstanceOf[TransactionView].transaction.id == t2p.from.id).get,
-        placeViews.find(_.asInstanceOf[PlaceView].place.id == t2p.to.id).get)
-      )
+    model.arcs.map({
+      case (p2t: P2T) =>
+        new ArcView(
+          placeViews.find(_.id == p2t.from.id).get,
+          trViews.find(_.id == p2t.to.id).get
+        )
+      case (t2p: T2P) =>
+        new ArcView(
+          trViews.find(_.id == t2p.from.id).get,
+          placeViews.find(_.id == t2p.to.id).get
+        )
+    })
 
   override def paintComponent(g : Graphics2D) {
     val d = size
@@ -100,23 +102,162 @@ class PetriNetCanvas (var model: Model, var file: Option[File] = None) extends C
   listenTo(mouse.wheel)
   reactions += {
     case e: MousePressed => mousePressedHandler(e)
+    case e: MouseClicked => mouseClickHandler(e)
     case e: MouseReleased => mouseReleasedHandler(e)
     case MouseDragged(_, p, _) => mouseDraggedHandler(p)
     case e: MouseWheelMoved => wheelRotationHandler(e)
   }
 
+//  val dialog = new CreatePlaceDialog(counter => {
+//    if (counter >= 0) {
+//      placeViews = placeViews :+ new PlaceView(
+//        model.addPlace(counter),
+//        nextColor,
+//        clickedPoint.get)
+//      update()
+//      true
+//    } else false
+//  })
+//
+//  dialog.centerOnScreen()
+//  dialog.open()
+
+  var clickedPoint: Option[Point] = None
+  val createMenu = new PopupMenu {
+    contents += new Menu("Create default") {
+      val place = new MenuItem(Action("Place") {
+        placeViews = placeViews :+ new PlaceView(
+          model.addPlace(),
+          placeDefColor,
+          clickedPoint.get)
+        update()
+      })
+
+      val transaction = new MenuItem(Action("Transaction") {
+        trViews = trViews :+ new TransactionView(
+          model.addTransaction(),
+          clickedPoint.get)
+        update()
+      })
+
+      var arc = new MenuItem(Action("Arc") {
+        arcCreation.isActive = true
+      })
+//      place.tooltip_=("Show dialog to create a place in clicked point")
+
+      contents += place
+      contents += transaction
+      contents += arc
+    }
+  }
+
+  val arcCreation = new ArcCreation
+  val cancelMenu = new PopupMenu {
+    val edit = new MenuItem(Action("Cancel") {
+      arcCreation.toNone()
+      update()
+    })
+    edit.tooltip_=("Cancel arc creation")
+
+    contents += edit
+  }
+
+  val onPlaceMenu = new PopupMenu {
+    val edit = new MenuItem(Action("Edit") {
+    })
+    edit.tooltip_=("Still not implemented =(")
+
+    contents += edit
+  }
+
+  class ArcCreation {
+    var isActive = false
+    var from: Option[UIElement] = None
+    var to: Option[UIElement] = None
+
+    def arc: Option[ArcView] = {
+      from match {
+        case Some(place: PlaceView) =>
+          to match {
+            case Some(tr: TransactionView) =>
+              model.addP2T(place.place, tr.transaction)
+              Some(new ArcView(place, tr))
+            case _ => None
+          }
+        case Some(tr: TransactionView) =>
+          to match {
+            case Some(place: PlaceView) =>
+              model.addT2P(tr.transaction, place.place)
+              Some(new ArcView(tr, place))
+            case _ => None
+          }
+        case _ =>
+          None
+      }
+    }
+
+    //noinspection AccessorLikeMethodIsUnit
+    def toNone() = {
+      from match {
+        case Some(place: PlaceView) => place.color = placeDefColor
+        case Some(tr: TransactionView) => tr.color = transactionDefColor
+        case _ =>
+      }
+      from = None
+      to = None
+      isActive = false
+    }
+  }
+
+  def mouseClickHandler(e: MouseClicked) = {
+    if (arcCreation.isActive && lastSelected.isDefined && SwingUtilities.isLeftMouseButton(e.peer)) {
+      arcCreation.from match {
+        case None =>
+          arcCreation.from = lastSelected
+          arcCreation.from.get.color = selectedColor
+          update()
+        case _ =>
+          arcCreation.to = lastSelected
+          arcCreation.arc match {
+            case Some(arcView: ArcView) =>
+              arcViews = arcViews :+ arcView
+              arcCreation.toNone()
+              model.enableActTransaction()
+              update()
+            case _ =>
+              println("Impossible to create an arc with such params")
+              // TODO Error message
+          }
+      }
+    }
+  }
+
   var target: Option[UIElement] = None
+  var lastSelected: Option[UIElement] = None
   var firstPressed = -1.0
 
   def mousePressedHandler(e: MousePressed) = {
+    target = (placeViews ::: trViews).find(_.isIn(e.point))
+    lastSelected = target
     if (SwingUtilities.isLeftMouseButton(e.peer)) {
       firstPressed = java.lang.System.currentTimeMillis
-      target = (placeViews ::: trViews).find(_.isIn(e.point))
+    }
+    if (SwingUtilities.isRightMouseButton(e.peer)) {
+      clickedPoint = Some(e.point)
+      if (arcCreation.isActive)
+        cancelMenu.show(this, e.point.x, e.point.y)
+      else
+        target match {
+          case Some(placeView: PlaceView) =>
+          case Some(trView: TransactionView) =>
+          case _ =>
+            createMenu.show(this, e.point.x, e.point.y)
+        }
     }
   }
 
   def mouseReleasedHandler(e: MouseReleased) = {
-    if (java.lang.System.currentTimeMillis - firstPressed < 300)
+    if (!arcCreation.isActive && java.lang.System.currentTimeMillis - firstPressed < 300)
       target match {
         case Some(tr: TransactionView) =>
           if (tr.transaction.isPossible)
@@ -166,6 +307,10 @@ object PetriNetCanvas {
     last = (last + 1) % colors.length
     colors(last)
   }
+
+  val placeDefColor = CYAN
+  val transactionDefColor = BLACK
+  val selectedColor = ORANGE
 }
 
 

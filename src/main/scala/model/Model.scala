@@ -5,17 +5,55 @@ import model.TransactionApplyResult.TransactionApplyResult
 /**
   * Created by neikila.
   */
-class Model (val places: List[Place], val transactions: List[Transaction], val arcs: List[Arc]) {
+class Model (var places: List[Place], var transactions: List[Transaction], var arcs: List[Arc]) {
   def this() = {
     this(List[Place](), List[Transaction](), List[Arc]())
   }
 
-  val (arcsPlace2Tr: List[P2T], arcsTr2Place: List[T2P]) = arcs.partition(_.direction.equals(Directions.Place2Transaction))
+  private val (arcsPlace2Tr: List[P2T], arcsTr2Place: List[T2P]) = arcs.partition(_.direction.equals(Directions.Place2Transaction))
 
-  val mapT2PArc = arcsTr2Place.groupBy(_.from)
-  val mapP2TArc = arcsPlace2Tr.groupBy(_.to)
+  var mapT2PArc = arcsTr2Place.groupBy(_.from)
+  var mapP2TArc = arcsPlace2Tr.groupBy(_.to)
 
-  def activeTransactions = transactions.filter(isEnoughMarks)
+  def addPlace(counter: Int = 0) = {
+    val place = util.Try(places.maxBy(_.id)).getOrElse(0) match {
+      case place: Place => new Place(place.id + 1, counter)
+      case 0 => new Place(0, counter)
+    }
+    places = places :+ place
+    place
+  }
+
+  def addP2T(from: Place, to: Transaction) = {
+    val p2t = new P2T(from, to)
+    val group = util.Try(mapP2TArc(to)).getOrElse(List[P2T]())
+    if (group.nonEmpty)
+      mapP2TArc -= to
+    mapP2TArc += (to -> (group :+ p2t))
+    arcs = arcs :+ p2t
+    p2t
+  }
+
+  def addT2P(from: Transaction, to: Place) = {
+    val t2p = new T2P(from, to)
+    val group = util.Try(mapT2PArc(from)).getOrElse(List[T2P]())
+    if (group.nonEmpty)
+      mapT2PArc -= from
+    mapT2PArc += (from -> (group :+ t2p))
+    arcs = arcs :+ t2p
+    t2p
+  }
+
+  def addTransaction(priority: Int = 0, desc: String = "") = {
+    val transaction = util.Try(transactions.maxBy(_.id)).getOrElse(0) match {
+      case transaction: Transaction => new Transaction(transaction.id + 1, priority, Some(desc))
+      case 0 => new Transaction(0, priority, Some(desc))
+    }
+    transactions = transactions :+ transaction
+    transaction
+  }
+
+  def activeTransactions = transactions.filter(tr => isEnoughMarks(tr) && mapT2PArc.contains(tr))
 
   def nextByPriority(shouldPrintToLog: Boolean = false) = {
     val actTr = activeTransactions

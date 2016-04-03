@@ -6,7 +6,7 @@ import java.io.File
 import javax.swing.SwingUtilities
 
 import XML.XMLView
-import model.Model
+import model.{Model, TransactionApplyResult}
 
 import scala.swing.event._
 import scala.swing.{Component, Graphics2D, Point}
@@ -100,26 +100,43 @@ class PetriNetCanvas (var model: Model, var file: Option[File] = None) extends C
   listenTo(mouse.wheel)
   reactions += {
     case e: MousePressed => mousePressedHandler(e)
-    case MouseReleased(_, p, _, _, _) => target = None; update(); println(s"Mouse released at ${p.x}, ${p.y}")
+    case e: MouseReleased => mouseReleasedHandler(e)
     case MouseDragged(_, p, _) => mouseDraggedHandler(p)
     case e: MouseWheelMoved => wheelRotationHandler(e)
   }
 
   var target: Option[UIElement] = None
+  var firstPressed = -1.0
+
   def mousePressedHandler(e: MousePressed) = {
-    println(s"Mouse clicked at ${e.point.x}, ${e.point.y}. ${e.modifiers}")
-    println(SwingUtilities.isLeftMouseButton(e.peer))
-    println(SwingUtilities.isRightMouseButton(e.peer))
-    target = (placeViews ::: trViews).find(_.isIn(e.point))
-    println(s"Target = $target")
+    if (SwingUtilities.isLeftMouseButton(e.peer)) {
+      firstPressed = java.lang.System.currentTimeMillis
+      target = (placeViews ::: trViews).find(_.isIn(e.point))
+    }
+  }
+
+  def mouseReleasedHandler(e: MouseReleased) = {
+    if (java.lang.System.currentTimeMillis - firstPressed < 300)
+      target match {
+        case Some(tr: TransactionView) =>
+          if (tr.transaction.isPossible)
+            model.nextWith(tr.transaction) match {
+              case TransactionApplyResult.Success =>
+                model.enableActTransaction()
+                update()
+              case _ =>
+            }
+        case _ =>
+      }
+    target = None
+    update()
   }
 
   def mouseDraggedHandler(p: Point) = {
     target match {
       case Some(element: UIElement) =>
-        println(s"Dragged to point ${p.x}, ${p.y}")
         element.pos.move(p.x, p.y)
-      case _ => None
+      case _ =>
     }
     update()
   }
@@ -141,7 +158,7 @@ class PetriNetCanvas (var model: Model, var file: Option[File] = None) extends C
 
 object PetriNetCanvas {
   val colors: List[Color] = {
-    BLUE :: RED :: CYAN :: GREEN :: ORANGE ::Nil
+    BLUE :: RED :: CYAN :: DARK_GRAY :: ORANGE ::Nil
   }
   var last = 0
 

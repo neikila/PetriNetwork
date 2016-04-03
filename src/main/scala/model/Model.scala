@@ -44,13 +44,17 @@ class Model (val places: List[Place], val transactions: List[Transaction], val a
   def nextByTransactionId(id: Int) = {
     transactions.find(_.id == id) match {
       case Some(tr: Transaction) =>
-        if (isEnoughMarks(tr))
-          applyTransaction(tr)
-        else
-          TransactionApplyResult.NotEnoughMarks
+        nextWith(tr)
       case _ =>
         TransactionApplyResult.NoTransactionWithSuchID
     }
+  }
+
+  def nextWith(tr: Transaction) = {
+    if (isEnoughMarks(tr))
+      applyTransaction(tr)
+    else
+      TransactionApplyResult.NotEnoughMarks
   }
 
   def applyTransaction(transaction: Transaction): TransactionApplyResult = {

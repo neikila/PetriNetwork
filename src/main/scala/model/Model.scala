@@ -6,6 +6,9 @@ import model.TransactionApplyResult.TransactionApplyResult
   * Created by neikila.
   */
 class Model (val places: List[Place], val transactions: List[Transaction], val arcs: List[Arc]) {
+  def this() = {
+    this(List[Place](), List[Transaction](), List[Arc]())
+  }
 
   val (arcsPlace2Tr: List[P2T], arcsTr2Place: List[T2P]) = arcs.partition(_.direction.equals(Directions.Place2Transaction))
 

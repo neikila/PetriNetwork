@@ -38,7 +38,6 @@ class XMLView (var petriNetCanvas: PetriNetCanvas) {
 
   def parse(file: File) = {
     val xml = XML.loadFile(file)
-    println(xml.toString)
     (xml \\ "places" \ PLACE).foreach(parseUICollection(_, petriNetCanvas.placeViews))
     (xml \\ "transactions" \ TRANSACTION).foreach(parseUICollection(_, petriNetCanvas.trViews))
   }

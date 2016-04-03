@@ -14,7 +14,7 @@ import scala.swing.{Component, Graphics2D, Point}
 /**
   * Created by neikila.
   */
-class PetriNetCanvas (val model: Model, var file: Option[File] = None) extends Component {
+class PetriNetCanvas (var model: Model, var file: Option[File] = None) extends Component {
   import PetriNetCanvas._
 
   var k: Double = 1
@@ -22,31 +22,40 @@ class PetriNetCanvas (val model: Model, var file: Option[File] = None) extends C
 
   var placeViews: List[UIElement] = model.places.map(new PlaceView(_, nextColor))
   var trViews: List[UIElement] = model.transactions.map(new TransactionView(_))
+  var arcViews: List[ArcView] = getArcsViewFromModel
 
-  file match {
-    case Some(file: File) => initView(file)
-    case _ => initView()
+  def initView(): Unit =
+    file match {
+      case Some(file: File) =>
+        val xmlView = new XMLView(this)
+        xmlView.parse(file)
+      case _ =>
+        val delta = 20
+        placeViews.indices.foreach(index => {
+          val pos = placeViews(index).pos
+          val rad = PlaceView.radius
+          pos.move(index * 2 * rad + rad + index * delta, rad)
+        })
+        trViews.indices.foreach(index => {
+          trViews(index).pos.move(
+            PlaceView.radius * 2 * (index + 1) + delta * index + delta / 2,
+            2 * PlaceView.radius + TransactionView.height / 2
+          )
+        })
+    }
+
+  def initView(model: Model, file: File): Unit = {
+    this.model = model
+    this.file = Some(file)
+    placeViews = model.places.map(new PlaceView(_, nextColor))
+    trViews = model.transactions.map(new TransactionView(_))
+    arcViews = getArcsViewFromModel
+    initView()
   }
 
-  def initView() = {
-    val delta = 20
-    placeViews.indices.foreach(index => {
-      val pos = placeViews(index).pos
-      val rad = PlaceView.radius
-      pos.move(index * 2 * rad + rad + index * delta, rad)
-    })
+  initView()
 
-    trViews.indices.foreach(index => {
-      val pos = trViews(index).pos
-      pos.move(PlaceView.radius * 2 * (index + 1) + delta * index + delta / 2, 2 * PlaceView.radius + TransactionView.height / 2)
-    })
-  }
-  def initView(fileView: File) = {
-    val xmlView = new XMLView(this)
-    xmlView.parse(fileView)
-  }
-
-  var arcViews: List[ArcView] =
+  def getArcsViewFromModel =
     model.arcsPlace2Tr.map(p2t =>
       new ArcView(
         placeViews.find(_.asInstanceOf[PlaceView].place.id == p2t.from.id).get,
@@ -55,9 +64,8 @@ class PetriNetCanvas (val model: Model, var file: Option[File] = None) extends C
     ) :::
       model.arcsTr2Place.map(t2p => new ArcView(
         trViews.find(_.asInstanceOf[TransactionView].transaction.id == t2p.from.id).get,
-        placeViews.find(_.asInstanceOf[PlaceView].place.id == t2p.to.id).get
+        placeViews.find(_.asInstanceOf[PlaceView].place.id == t2p.to.id).get)
       )
-    )
 
   override def paintComponent(g : Graphics2D) {
     val d = size

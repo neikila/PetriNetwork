@@ -2,14 +2,11 @@ package UI
 
 import java.io.File
 
-import XML.XMLView
+import XML.{XMLComplex, XMLModel, XMLView}
 import _root_.model.Model
 
-import scala.concurrent.{Future, ExecutionContext}
+import scala.concurrent.{ExecutionContext, Future}
 import scala.swing._
-import scala._
-import Swing._
-
 import ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
 
@@ -19,7 +16,7 @@ import scala.util.{Failure, Success}
 class MainWindow (var model: Model) extends MainFrame {
 
   title = "Petri net"
-  val petriView = new PetriNetCanvas(model, Some(new File("out", "test.xml")))
+//  var petriView = new PetriNetCanvas(model, Some(new File("out", "test.xml")))
 
   preferredSize = new Dimension(640, 480)
 
@@ -39,6 +36,35 @@ class MainWindow (var model: Model) extends MainFrame {
       c
     }
 
+
+    val petriView = new PetriNetCanvas(model, None)
+    val textField = new TextField { columns = 32 }
+    val saveFileBtn: Button = Button("Save project") {
+      val fileChooser = new FileChooser()
+      fileChooser.peer.setCurrentDirectory(new File("out"))
+      fileChooser.showSaveDialog(grid)
+      if (fileChooser.selectedFile != null) {
+        val filename = fileChooser.selectedFile.getName
+        textField.text = filename
+        XMLComplex.saveProject(fileChooser.selectedFile, petriView)
+        println(s"Filename = ${fileChooser.selectedFile.getCanonicalPath}")
+        repaint()
+      }
+    }
+
+    val openFileBtn: Button = Button("Open project") {
+      val fileChooser = new FileChooser()
+      fileChooser.peer.setCurrentDirectory(new File("out"))
+      fileChooser.showOpenDialog(grid)
+      if (fileChooser.selectedFile != null) {
+        val filename = fileChooser.selectedFile.getName
+        textField.text = filename
+        XMLComplex.openProject(fileChooser.selectedFile, petriView)
+        println(s"Filename = ${fileChooser.selectedFile.getCanonicalPath}")
+        repaint()
+      }
+    }
+
     add(new Label("Label @ (0,0)") {border=Swing.EtchedBorder(Swing.Lowered) },
       constraints(0, 0, gridHeight=2, fill=GridBagPanel.Fill.Both))
     add(Button("Next by priority") {
@@ -47,31 +73,18 @@ class MainWindow (var model: Model) extends MainFrame {
       }
 
       f onComplete {
-        case Success(_) => petriView.update(); println("Next finished")
-        case Failure(error) => println("A error has occured: " + error.getMessage)
+        case Success(_) =>
+          petriView.update()
+          println("Next finished")
+        case Failure(error) =>
+          println("A error has occured: " + error.getMessage)
       }
       println(new XMLView(petriView).xmlView.toString())
     }, constraints(2, 0))
-
-    val textField = new TextField { columns = 32 }
-
-    val openFileBtn: Button = Button("Open file") {
-      val fileChooser = new FileChooser()
-      fileChooser.peer.setCurrentDirectory(new File("out"))
-      fileChooser.showSaveDialog(grid)
-      if (fileChooser.selectedFile != null) {
-        val filename = fileChooser.selectedFile.getName
-        textField.text = filename
-        println(s"Filename = ${fileChooser.selectedFile.getCanonicalPath}")
-        new XMLView(petriView).save(fileChooser.selectedFile)
-        repaint()
-      }
-    }
-
-    add(openFileBtn, constraints(2, 1, fill = GridBagPanel.Fill.Horizontal))
+    add(saveFileBtn, constraints(2, 1, fill = GridBagPanel.Fill.Horizontal))
+    add(openFileBtn, constraints(2, 2, fill = GridBagPanel.Fill.Horizontal))
     add(textField, constraints(1, 0, weightX=1.0, fill=GridBagPanel.Fill.Horizontal))
-    add(petriView,
-      constraints(1, 1, gridHeight=3, weightY = 1,
+    add(petriView, constraints(1, 1, gridHeight=3, weightY = 1,
         fill=GridBagPanel.Fill.Both))
     add(Button("Close") { sys.exit(0) },
       constraints(0, 4, gridWidth=3, fill=GridBagPanel.Fill.Horizontal))

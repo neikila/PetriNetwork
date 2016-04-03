@@ -23,7 +23,10 @@ class TransactionView (val transaction: Transaction, override val pos: Point = n
     (width / k).toInt, (height / k).toInt)
 
   override def paint(g: Graphics2D, k: Double = 1, camera: Point = new Point(0, 0)): Unit = {
-    g.setColor(color)
+    if (transaction.isPossible)
+      g.setColor(Color.GREEN)
+    else
+      g.setColor(color)
     val rectangle = this.rectangle(k)
     g.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height)
   }

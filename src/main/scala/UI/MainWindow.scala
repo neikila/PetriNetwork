@@ -60,6 +60,7 @@ class MainWindow (model: Model) extends MainFrame {
         textField.text = filename
         Future {
           XMLComplex.openProject(fileChooser.selectedFile, petriView)
+          petriView.model.enableActTransaction()
         } onComplete {
           case Success(_) =>
             println(s"Filename = ${fileChooser.selectedFile.getCanonicalPath}")
@@ -75,6 +76,7 @@ class MainWindow (model: Model) extends MainFrame {
     add(Button("Next by priority") {
       Future {
         petriView.model.nextByPriority(true)
+        petriView.model.enableActTransaction()
       } onComplete {
         case Success(_) =>
           petriView.update()

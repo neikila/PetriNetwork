@@ -15,20 +15,30 @@ class Model (val places: List[Place], val transactions: List[Transaction], val a
   val mapT2PArc = arcsTr2Place.groupBy(_.from)
   val mapP2TArc = arcsPlace2Tr.groupBy(_.to)
 
+  def activeTransactions = transactions.filter(isEnoughMarks)
+
   def nextByPriority(shouldPrintToLog: Boolean = false) = {
-    val activeTransactions = transactions.filter(isEnoughMarks)
+    val actTr = activeTransactions
 
     if (shouldPrintToLog) {
       println()
       println("All applicable transactions")
-      activeTransactions.foreach(tr => println(s"Transaction[${tr.id}] with priority ${tr.priority}"))
+      actTr.foreach(tr => {
+        tr.isPossible = true
+        println(s"Transaction[${tr.id}] with priority ${tr.priority}")
+      }
+      )
     }
 
-    if (activeTransactions.isEmpty)
+    if (actTr.isEmpty)
       TransactionApplyResult.NoApplicableTransactions
-    else {
-      applyTransaction(activeTransactions.head)
-    }
+    else
+      applyTransaction(actTr.head)
+  }
+
+  def enableActTransaction() = {
+    transactions.foreach(_.isPossible = false)
+    activeTransactions.foreach(_.isPossible = true)
   }
 
   def nextByTransactionId(id: Int) = {

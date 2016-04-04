@@ -155,21 +155,31 @@ class PetriNetCanvas (var model: Model, var file: Option[File] = None) extends C
     val edit = new MenuItem(Action("Edit") {
       lastSelected match {
         case Some(placeView: PlaceView) =>
-          val dialog = new EditPlaceDialog(counter => {
+          val dialog = new EditIntFieldDialog(counter => {
             if (counter >= 0) {
               placeView.place.counter = counter
               model.enableActTransaction()
               update()
               true
             } else false
-          }, "Apply")
+          }, "Apply", defaultValue = placeView.place.counter)
 
           dialog.centerOnScreen()
           dialog.open()
-        case _ => None
+        case Some(tr: TransactionView) =>
+          val dialog = new EditIntFieldDialog(priority => {
+            if (priority >= 0) {
+              tr.transaction.priority = priority
+              true
+            } else false
+          }, "Apply", "Priority", "Transaction", tr.transaction.priority)
+
+          dialog.centerOnScreen()
+          dialog.open()
+        case _ =>
       }
     })
-    edit.tooltip_=("Only places could be edited")
+    edit.tooltip_=("Counter for places\nPriority for transactions")
 
     val remove = new MenuItem(Action("Remove") {
       lastSelected match {

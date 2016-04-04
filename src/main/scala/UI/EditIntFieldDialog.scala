@@ -6,13 +6,14 @@ import swing._
   * Created by Kirill on 04.04.2016.
   */
 
-class EditPlaceDialog(val edit: (Int) => Boolean, buttonText: String = "Create") extends Dialog {
+class EditIntFieldDialog(val edit: (Int) => Boolean, buttonText: String = "Create",
+                         fieldLabel: String = "Counts", titleCustom: String = "Place", defaultValue: Int = 0) extends Dialog {
   val counter = new TextField
-  counter.text = "0"
+  counter.text = defaultValue.toString
 
   preferredSize = new Dimension(200, 120)
 
-  title = "Place"
+  title = titleCustom
   modal = true
 
   contents = new GridBagPanel { grid =>
@@ -31,7 +32,7 @@ class EditPlaceDialog(val edit: (Int) => Boolean, buttonText: String = "Create")
       c
     }
 
-    add(new Label("Counts") {border=Swing.EtchedBorder(Swing.Lowered) },
+    add(new Label(fieldLabel) {border=Swing.EtchedBorder(Swing.Lowered) },
       constraints(0, 0, gridWidth = 2))
     add(counter, constraints(2, 0, gridWidth = 2, fill = GridBagPanel.Fill.Horizontal))
     add(Button(buttonText) {

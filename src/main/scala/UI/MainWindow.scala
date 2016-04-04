@@ -45,9 +45,14 @@ class MainWindow (model: Model) extends MainFrame {
       if (fileChooser.selectedFile != null) {
         val filename = fileChooser.selectedFile.getName
         textField.text = filename
-        XMLComplex.saveProject(fileChooser.selectedFile, petriView)
-        println(s"Filename = ${fileChooser.selectedFile.getCanonicalPath}")
-        repaint()
+        Future {
+          XMLComplex.saveProject(fileChooser.selectedFile, petriView)
+        } onComplete {
+          case Success(_) =>
+            println(s"Filename = ${fileChooser.selectedFile.getCanonicalPath}")
+            repaint()
+          case Failure(e) => println(e.getLocalizedMessage)
+        }
       }
     }
 

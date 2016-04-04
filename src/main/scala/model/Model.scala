@@ -10,10 +10,17 @@ class Model (var places: List[Place], var transactions: List[Transaction], var a
     this(List[Place](), List[Transaction](), List[Arc]())
   }
 
-  private val (arcsPlace2Tr: List[P2T], arcsTr2Place: List[T2P]) = arcs.partition(_.direction.equals(Directions.Place2Transaction))
+  var mapT2PArc = Map[Transaction, List[T2P]]()
+  var mapP2TArc = Map[Transaction, List[P2T]]()
 
-  var mapT2PArc = arcsTr2Place.groupBy(_.from)
-  var mapP2TArc = arcsPlace2Tr.groupBy(_.to)
+  def initMaps(): Unit = {
+    val (arcsPlace2Tr: List[P2T], arcsTr2Place: List[T2P]) =
+      arcs.partition(_.direction.equals(Directions.Place2Transaction))
+
+    mapT2PArc = arcsTr2Place.groupBy(_.from)
+    mapP2TArc = arcsPlace2Tr.groupBy(_.to)
+  }
+  initMaps()
 
   def addPlace(counter: Int = 0) = {
     val place = util.Try(places.maxBy(_.id)).getOrElse(0) match {
@@ -44,6 +51,28 @@ class Model (var places: List[Place], var transactions: List[Transaction], var a
     t2p
   }
 
+  def remove(place: Place) = {
+    places = places.filter(_.id != place.id)
+    val (toRemove, left) = arcs.partition({
+      case p2t: P2T => p2t.from == place
+      case t2p: T2P => t2p.to == place
+    })
+    arcs = left
+    if (toRemove.nonEmpty)
+      initMaps()
+  }
+
+  def remove(tr: Transaction) = {
+    transactions = transactions.filter(_.id != tr.id)
+    val (toRemove, left) = arcs.partition({
+      case p2t: P2T => p2t.to == tr
+      case t2p: T2P => t2p.from ==  tr
+    })
+    arcs = left
+    if (toRemove.nonEmpty)
+      initMaps()
+  }
+
   def addTransaction(priority: Int = 0, desc: String = "") = {
     val transaction = util.Try(transactions.maxBy(_.id)).getOrElse(0) match {
       case transaction: Transaction => new Transaction(transaction.id + 1, priority, Some(desc))
@@ -53,7 +82,8 @@ class Model (var places: List[Place], var transactions: List[Transaction], var a
     transaction
   }
 
-  def activeTransactions = transactions.filter(tr => isEnoughMarks(tr) && mapT2PArc.contains(tr))
+  def activeTransactions = transactions.filter(tr =>
+    isEnoughMarks(tr) && (mapT2PArc.contains(tr) || mapP2TArc.contains(tr)))
 
   def nextByPriority(shouldPrintToLog: Boolean = false) = {
     val actTr = activeTransactions

@@ -108,19 +108,6 @@ class PetriNetCanvas (var model: Model, var file: Option[File] = None) extends C
     case e: MouseWheelMoved => wheelRotationHandler(e)
   }
 
-//  val dialog = new CreatePlaceDialog(counter => {
-//    if (counter >= 0) {
-//      placeViews = placeViews :+ new PlaceView(
-//        model.addPlace(counter),
-//        nextColor,
-//        clickedPoint.get)
-//      update()
-//      true
-//    } else false
-//  })
-//
-//  dialog.centerOnScreen()
-//  dialog.open()
 
   var clickedPoint: Option[Point] = None
   val createMenu = new PopupMenu {
@@ -162,12 +149,45 @@ class PetriNetCanvas (var model: Model, var file: Option[File] = None) extends C
     contents += edit
   }
 
-  val onPlaceMenu = new PopupMenu {
+  val UIElementMenu = new PopupMenu {
     val edit = new MenuItem(Action("Edit") {
+      lastSelected match {
+        case Some(placeView: PlaceView) =>
+          val dialog = new EditPlaceDialog(counter => {
+            if (counter >= 0) {
+              placeView.place.counter = counter
+              update()
+              true
+            } else false
+          }, "Apply")
+
+          dialog.centerOnScreen()
+          dialog.open()
+        case _ => None
+      }
     })
-    edit.tooltip_=("Still not implemented =(")
+    edit.tooltip_=("Only places could be edited")
+
+    val remove = new MenuItem(Action("Remove") {
+      lastSelected match {
+        case Some(placeView: PlaceView) =>
+          placeViews = placeViews.filter(_.id != placeView.id)
+          model.remove(placeView.place)
+          arcViews = getArcsViewFromModel
+        case Some(tr: TransactionView) =>
+          trViews = trViews.filter(_.id != tr.id)
+          model.remove(tr.transaction)
+          arcViews = getArcsViewFromModel
+        case _ =>
+          println("WTF")
+      }
+      model.enableActTransaction()
+      update()
+    })
+    remove.tooltip_=("Cascade mod")
 
     contents += edit
+    contents += remove
   }
 
   class ArcCreation {
@@ -248,8 +268,8 @@ class PetriNetCanvas (var model: Model, var file: Option[File] = None) extends C
         cancelMenu.show(this, e.point.x, e.point.y)
       else
         target match {
-          case Some(placeView: PlaceView) =>
-          case Some(trView: TransactionView) =>
+          case Some(element: UIElement) =>
+            UIElementMenu.show(this, e.point.x, e.point.y)
           case _ =>
             createMenu.show(this, e.point.x, e.point.y)
         }

@@ -1,13 +1,12 @@
 package UI
 
 import swing._
-import scala.swing.BorderPanel.Position._
 
 /**
   * Created by Kirill on 04.04.2016.
   */
 
-class CreatePlaceDialog(val create: (Int) => Boolean) extends Dialog {
+class EditPlaceDialog(val edit: (Int) => Boolean, buttonText: String = "Create") extends Dialog {
   val counter = new TextField
   counter.text = "0"
 
@@ -33,13 +32,14 @@ class CreatePlaceDialog(val create: (Int) => Boolean) extends Dialog {
     }
 
     add(new Label("Counts") {border=Swing.EtchedBorder(Swing.Lowered) },
-      constraints(0, 0))
+      constraints(0, 0, gridWidth = 2))
     add(counter, constraints(2, 0, gridWidth = 2, fill = GridBagPanel.Fill.Horizontal))
-    add(Button("Create") {
-      if (create(util.Try(counter.text.toInt).getOrElse(0))) {
+    add(Button(buttonText) {
+      if (edit(util.Try(counter.text.toInt).getOrElse(0))) {
         close()
       }
-    }, constraints(1, 4, gridWidth=2, fill=GridBagPanel.Fill.Horizontal))
+    }, constraints(2, 4, fill=GridBagPanel.Fill.Horizontal))
+    add(Button("Cancel") { close() }, constraints(1, 4, fill=GridBagPanel.Fill.Horizontal))
     //        Dialog.showMessage(this, "Wrong username or password!", "Login Error", Dialog.Message.Error)
   }
 }

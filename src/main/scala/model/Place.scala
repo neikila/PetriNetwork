@@ -15,4 +15,8 @@ class Place (id: Int, var counter: Int = 0) extends Element(id) {
     counter -= amount
     temp
   }
+
+  def == (place: Place) = {
+    id == place.id
+  }
 }

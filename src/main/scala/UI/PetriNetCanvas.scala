@@ -24,7 +24,7 @@ class PetriNetCanvas (var model: Model, var file: Option[File] = None) extends C
   var trViews: List[UIElement] = model.transactions.map(new TransactionView(_))
   var arcViews: List[ArcView] = getArcsViewFromModel
 
-  def initView(): Unit =
+  def initView(): Unit = {
     camera = new Point(0, 0)
     file match {
       case Some(file: File) =>
@@ -44,6 +44,7 @@ class PetriNetCanvas (var model: Model, var file: Option[File] = None) extends C
           )
         })
     }
+  }
 
   def initView(model: Model, file: File): Unit = {
     this.model = model

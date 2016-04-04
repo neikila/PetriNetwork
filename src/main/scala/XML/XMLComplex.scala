@@ -47,4 +47,6 @@ object XMLComplex {
 
     petriView.initView(petriNet, new File(file.getParentFile, (xml \\ "view").text))
   }
+
+  val defaultProjectsDirectory = "projects"
 }

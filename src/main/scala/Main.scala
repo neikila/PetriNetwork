@@ -1,7 +1,7 @@
 import java.io.File
 
 import UI.MainWindow
-import _root_.XML.{XMLModel, XMLModel$}
+import _root_.XML.XMLComplex
 import model._
 
 import scala.collection.immutable.HashMap
@@ -14,6 +14,8 @@ class Main {
 
 object Main {
   def main(args: Array[String]): Unit = {
+    val file = new File(XMLComplex.defaultProjectsDirectory)
+    require(file.exists && file.isDirectory)
     MainWindow()
   }
 }

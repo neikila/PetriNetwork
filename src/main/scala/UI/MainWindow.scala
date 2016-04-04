@@ -40,7 +40,7 @@ class MainWindow (model: Model) extends MainFrame {
     val textField = new TextField { columns = 32 }
     val saveFileBtn: Button = Button("Save project") {
       val fileChooser = new FileChooser()
-      fileChooser.peer.setCurrentDirectory(new File("out"))
+      fileChooser.peer.setCurrentDirectory(new File(XMLComplex.defaultProjectsDirectory))
       fileChooser.showSaveDialog(grid)
       if (fileChooser.selectedFile != null) {
         val filename = fileChooser.selectedFile.getName
@@ -53,7 +53,7 @@ class MainWindow (model: Model) extends MainFrame {
 
     val openFileBtn: Button = Button("Open project") {
       val fileChooser = new FileChooser()
-      fileChooser.peer.setCurrentDirectory(new File("out"))
+      fileChooser.peer.setCurrentDirectory(new File(XMLComplex.defaultProjectsDirectory))
       fileChooser.showOpenDialog(grid)
       if (fileChooser.selectedFile != null) {
         val filename = fileChooser.selectedFile.getName
@@ -71,8 +71,6 @@ class MainWindow (model: Model) extends MainFrame {
       }
     }
 
-    add(new Label("Label @ (0,0)") {border=Swing.EtchedBorder(Swing.Lowered) },
-      constraints(0, 0, gridHeight=2, fill=GridBagPanel.Fill.Both))
     add(Button("Next by priority") {
       Future {
         petriView.model.nextByPriority(true)
@@ -88,8 +86,8 @@ class MainWindow (model: Model) extends MainFrame {
     }, constraints(2, 0))
     add(saveFileBtn, constraints(2, 1, fill = GridBagPanel.Fill.Horizontal))
     add(openFileBtn, constraints(2, 2, fill = GridBagPanel.Fill.Horizontal))
-    add(textField, constraints(1, 0, weightX=1.0, fill=GridBagPanel.Fill.Horizontal))
-    add(petriView, constraints(1, 1, gridHeight=3, weightY = 1,
+    add(textField, constraints(0, 0, weightX=1.0, fill=GridBagPanel.Fill.Horizontal))
+    add(petriView, constraints(0, 1, gridHeight=3, weightY = 1,
         fill=GridBagPanel.Fill.Both))
     add(Button("Close") { sys.exit(0) },
       constraints(0, 4, gridWidth=3, fill=GridBagPanel.Fill.Horizontal))

@@ -1,0 +1,186 @@
+<document>
+  <places>
+    <place>
+      <id>0</id>
+      <pos y="58" x="85"/>
+      <color r="0" g="255" b="255"/>
+    </place>
+    <place>
+      <id>1</id>
+      <pos y="56" x="434"/>
+      <color r="0" g="255" b="255"/>
+    </place>
+    <place>
+      <id>3</id>
+      <pos y="390" x="246"/>
+      <color r="0" g="255" b="255"/>
+    </place>
+    <place>
+      <id>4</id>
+      <pos y="390" x="544"/>
+      <color r="0" g="255" b="255"/>
+    </place>
+    <place>
+      <id>5</id>
+      <pos y="380" x="-46"/>
+      <color r="0" g="255" b="255"/>
+    </place>
+    <place>
+      <id>6</id>
+      <pos y="380" x="54"/>
+      <color r="0" g="255" b="255"/>
+    </place>
+    <place>
+      <id>7</id>
+      <pos y="392" x="356"/>
+      <color r="0" g="255" b="255"/>
+    </place>
+    <place>
+      <id>8</id>
+      <pos y="390" x="640"/>
+      <color r="0" g="255" b="255"/>
+    </place>
+    <place>
+      <id>9</id>
+      <pos y="768" x="246"/>
+      <color r="0" g="255" b="255"/>
+    </place>
+    <place>
+      <id>10</id>
+      <pos y="1058" x="-2"/>
+      <color r="0" g="255" b="255"/>
+    </place>
+    <place>
+      <id>11</id>
+      <pos y="1052" x="486"/>
+      <color r="0" g="255" b="255"/>
+    </place>
+    <place>
+      <id>12</id>
+      <pos y="1268" x="318"/>
+      <color r="0" g="255" b="255"/>
+    </place>
+    <place>
+      <id>13</id>
+      <pos y="1272" x="170"/>
+      <color r="0" g="255" b="255"/>
+    </place>
+    <place>
+      <id>14</id>
+      <pos y="1304" x="-240"/>
+      <color r="0" g="255" b="255"/>
+    </place>
+    <place>
+      <id>15</id>
+      <pos y="1308" x="702"/>
+      <color r="0" g="255" b="255"/>
+    </place>
+    <place>
+      <id>16</id>
+      <pos y="1322" x="490"/>
+      <color r="0" g="255" b="255"/>
+    </place>
+    <place>
+      <id>17</id>
+      <pos y="1572" x="486"/>
+      <color r="0" g="255" b="255"/>
+    </place>
+    <place>
+      <id>18</id>
+      <pos y="1316" x="-4"/>
+      <color r="0" g="255" b="255"/>
+    </place>
+    <place>
+      <id>19</id>
+      <pos y="1550" x="-4"/>
+      <color r="0" g="255" b="255"/>
+    </place>
+    <place>
+      <id>20</id>
+      <pos y="1820" x="254"/>
+      <color r="0" g="255" b="255"/>
+    </place>
+  </places>
+  <transactions>
+    <transaction>
+      <id>0</id>
+      <pos y="248" x="-42"/>
+      <color r="0" g="0" b="0"/>
+    </transaction>
+    <transaction>
+      <id>1</id>
+      <pos y="59" x="-86"/>
+      <color r="0" g="0" b="0"/>
+    </transaction>
+    <transaction>
+      <id>2</id>
+      <pos y="59" x="622"/>
+      <color r="0" g="0" b="0"/>
+    </transaction>
+    <transaction>
+      <id>3</id>
+      <pos y="262" x="244"/>
+      <color r="0" g="0" b="0"/>
+    </transaction>
+    <transaction>
+      <id>4</id>
+      <pos y="260" x="552"/>
+      <color r="0" g="0" b="0"/>
+    </transaction>
+    <transaction>
+      <id>5</id>
+      <pos y="548" x="548"/>
+      <color r="0" g="0" b="0"/>
+    </transaction>
+    <transaction>
+      <id>6</id>
+      <pos y="546" x="-38"/>
+      <color r="0" g="0" b="0"/>
+    </transaction>
+    <transaction>
+      <id>7</id>
+      <pos y="548" x="246"/>
+      <color r="0" g="0" b="0"/>
+    </transaction>
+    <transaction>
+      <id>8</id>
+      <pos y="924" x="484"/>
+      <color r="0" g="0" b="0"/>
+    </transaction>
+    <transaction>
+      <id>9</id>
+      <pos y="914" x="2"/>
+      <color r="0" g="0" b="0"/>
+    </transaction>
+    <transaction>
+      <id>10</id>
+      <pos y="1200" x="-2"/>
+      <color r="0" g="0" b="0"/>
+    </transaction>
+    <transaction>
+      <id>11</id>
+      <pos y="1188" x="490"/>
+      <color r="0" g="0" b="0"/>
+    </transaction>
+    <transaction>
+      <id>12</id>
+      <pos y="1434" x="490"/>
+      <color r="0" g="0" b="0"/>
+    </transaction>
+    <transaction>
+      <id>13</id>
+      <pos y="1440" x="-4"/>
+      <color r="0" g="0" b="0"/>
+    </transaction>
+    <transaction>
+      <id>14</id>
+      <pos y="1672" x="-2"/>
+      <color r="0" g="0" b="0"/>
+    </transaction>
+    <transaction>
+      <id>15</id>
+      <pos y="1702" x="488"/>
+      <color r="0" g="0" b="0"/>
+    </transaction>
+  </transactions>
+</document>

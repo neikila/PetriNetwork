@@ -40,7 +40,10 @@ class MainWindow (model: Model) extends MainFrame {
     val textField = new TextField { columns = 32 }
     val saveFileBtn: Button = Button("Save project") {
       val fileChooser = new FileChooser()
-      fileChooser.peer.setCurrentDirectory(new File(XMLComplex.defaultProjectsDirectory))
+      if (new File(XMLComplex.defaultProjectsDirectory).exists())
+        fileChooser.peer.setCurrentDirectory(new File(XMLComplex.defaultProjectsDirectory))
+      else
+        fileChooser.peer.setCurrentDirectory(new File("."))
       fileChooser.showSaveDialog(grid)
       if (fileChooser.selectedFile != null) {
         val filename = fileChooser.selectedFile.getName
@@ -58,7 +61,10 @@ class MainWindow (model: Model) extends MainFrame {
 
     val openFileBtn: Button = Button("Open project") {
       val fileChooser = new FileChooser()
-      fileChooser.peer.setCurrentDirectory(new File(XMLComplex.defaultProjectsDirectory))
+      if (new File(XMLComplex.defaultProjectsDirectory).exists())
+        fileChooser.peer.setCurrentDirectory(new File(XMLComplex.defaultProjectsDirectory))
+      else
+        fileChooser.peer.setCurrentDirectory(new File("."))
       fileChooser.showOpenDialog(grid)
       if (fileChooser.selectedFile != null) {
         val filename = fileChooser.selectedFile.getName
@@ -78,16 +84,14 @@ class MainWindow (model: Model) extends MainFrame {
 
     add(Button("Next by priority") {
       Future {
-        petriView.model.nextByPriority(true)
+        petriView.model.nextByPriority()
         petriView.model.enableActTransaction()
       } onComplete {
         case Success(_) =>
           petriView.update()
-          println("Next finished")
         case Failure(error) =>
           println("A error has occured: " + error.getMessage)
       }
-      println(new XMLView(petriView).xmlView.toString)
     }, constraints(2, 0))
     add(saveFileBtn, constraints(2, 1, fill = GridBagPanel.Fill.Horizontal))
     add(openFileBtn, constraints(2, 2, fill = GridBagPanel.Fill.Horizontal))

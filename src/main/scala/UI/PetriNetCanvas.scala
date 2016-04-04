@@ -122,7 +122,7 @@ class PetriNetCanvas (var model: Model, var file: Option[File] = None) extends C
         update()
       })
 
-      val transaction = new MenuItem(Action("Transaction") {
+      val transaction = new MenuItem(Action("Transition") {
         trViews = trViews :+ new TransactionView(
           model.addTransaction(),
           toWorld(clickedPoint.get))
@@ -172,14 +172,14 @@ class PetriNetCanvas (var model: Model, var file: Option[File] = None) extends C
               tr.transaction.priority = priority
               true
             } else false
-          }, "Apply", "Priority", "Transaction", tr.transaction.priority)
+          }, "Apply", "Priority", "Transition", tr.transaction.priority)
 
           dialog.centerOnScreen()
           dialog.open()
         case _ =>
       }
     })
-    edit.tooltip_=("Counter for places\nPriority for transactions")
+    edit.tooltip_=("Counter for places. Priority for transitions")
 
     val remove = new MenuItem(Action("Remove") {
       lastSelected match {

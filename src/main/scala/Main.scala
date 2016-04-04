@@ -14,8 +14,6 @@ class Main {
 
 object Main {
   def main(args: Array[String]): Unit = {
-    val file = new File(XMLComplex.defaultProjectsDirectory)
-    require(file.exists && file.isDirectory, s"Please, create directory ${file.getAbsolutePath}")
     MainWindow()
   }
 }

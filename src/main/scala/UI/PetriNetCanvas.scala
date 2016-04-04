@@ -18,13 +18,14 @@ class PetriNetCanvas (var model: Model, var file: Option[File] = None) extends C
   import PetriNetCanvas._
 
   var k: Double = 1
-  var camera: Point = new Point(size.width / 2, size.height / 2)
+  var camera: Point = new Point(0, 0)
 
   var placeViews: List[UIElement] = model.places.map(new PlaceView(_, placeDefColor))
   var trViews: List[UIElement] = model.transactions.map(new TransactionView(_))
   var arcViews: List[ArcView] = getArcsViewFromModel
 
   def initView(): Unit =
+    camera = new Point(0, 0)
     file match {
       case Some(file: File) =>
         val xmlView = new XMLView(this)
@@ -74,7 +75,7 @@ class PetriNetCanvas (var model: Model, var file: Option[File] = None) extends C
     g.setColor(Color.white)
     g.fillRect(0,0, d.width, d.height)
 
-    arcViews.foreach(_.paint(g, k))
+    arcViews.foreach(_.paint(g, k, camera))
 
     target match {
       case Some(targetPV) =>
@@ -104,7 +105,7 @@ class PetriNetCanvas (var model: Model, var file: Option[File] = None) extends C
     case e: MousePressed => mousePressedHandler(e)
     case e: MouseClicked => mouseClickHandler(e)
     case e: MouseReleased => mouseReleasedHandler(e)
-    case MouseDragged(_, p, _) => mouseDraggedHandler(p)
+    case e: MouseDragged => mouseDraggedHandler(e)
     case e: MouseWheelMoved => wheelRotationHandler(e)
   }
 
@@ -116,14 +117,14 @@ class PetriNetCanvas (var model: Model, var file: Option[File] = None) extends C
         placeViews = placeViews :+ new PlaceView(
           model.addPlace(),
           placeDefColor,
-          clickedPoint.get)
+          toWorld(clickedPoint.get))
         update()
       })
 
       val transaction = new MenuItem(Action("Transaction") {
         trViews = trViews :+ new TransactionView(
           model.addTransaction(),
-          clickedPoint.get)
+          toWorld(clickedPoint.get))
         update()
       })
 
@@ -140,13 +141,13 @@ class PetriNetCanvas (var model: Model, var file: Option[File] = None) extends C
 
   val arcCreation = new ArcCreation
   val cancelMenu = new PopupMenu {
-    val edit = new MenuItem(Action("Cancel") {
+    val cancel = new MenuItem(Action("Cancel") {
       arcCreation.toNone()
       update()
     })
-    edit.tooltip_=("Cancel arc creation")
+    cancel.tooltip_=("Cancel arc creation")
 
-    contents += edit
+    contents += cancel
   }
 
   val UIElementMenu = new PopupMenu {
@@ -156,6 +157,7 @@ class PetriNetCanvas (var model: Model, var file: Option[File] = None) extends C
           val dialog = new EditPlaceDialog(counter => {
             if (counter >= 0) {
               placeView.place.counter = counter
+              model.enableActTransaction()
               update()
               true
             } else false
@@ -257,48 +259,55 @@ class PetriNetCanvas (var model: Model, var file: Option[File] = None) extends C
   var firstPressed = -1.0
 
   def mousePressedHandler(e: MousePressed) = {
-    target = (placeViews ::: trViews).find(_.isIn(e.point))
+    lastDragPoint = new Point(e.point)
+    target = (placeViews ::: trViews).find(_.isIn(toWorld(e.point)))
     lastSelected = target
-    if (SwingUtilities.isLeftMouseButton(e.peer)) {
-      firstPressed = java.lang.System.currentTimeMillis
-    }
-    if (SwingUtilities.isRightMouseButton(e.peer)) {
-      clickedPoint = Some(e.point)
-      if (arcCreation.isActive)
-        cancelMenu.show(this, e.point.x, e.point.y)
-      else
-        target match {
-          case Some(element: UIElement) =>
-            UIElementMenu.show(this, e.point.x, e.point.y)
-          case _ =>
-            createMenu.show(this, e.point.x, e.point.y)
-        }
-    }
+    firstPressed = java.lang.System.currentTimeMillis
   }
 
   def mouseReleasedHandler(e: MouseReleased) = {
-    if (!arcCreation.isActive && java.lang.System.currentTimeMillis - firstPressed < 300)
-      target match {
-        case Some(tr: TransactionView) =>
-          if (tr.transaction.isPossible)
-            model.nextWith(tr.transaction) match {
-              case TransactionApplyResult.Success =>
-                model.enableActTransaction()
-                update()
-              case _ =>
-            }
-        case _ =>
+    if (java.lang.System.currentTimeMillis - firstPressed < 300) {
+      if (!arcCreation.isActive)
+        target match {
+          case Some(tr: TransactionView) =>
+            if (tr.transaction.isPossible)
+              model.nextWith(tr.transaction) match {
+                case TransactionApplyResult.Success =>
+                  model.enableActTransaction()
+                  update()
+                case _ =>
+              }
+          case _ =>
+        }
+      if (SwingUtilities.isRightMouseButton(e.peer)) {
+        clickedPoint = Some(e.point)
+        if (arcCreation.isActive)
+          cancelMenu.show(this, e.point.x, e.point.y)
+        else
+          target match {
+            case Some(element: UIElement) =>
+              UIElementMenu.show(this, e.point.x, e.point.y)
+            case _ =>
+              createMenu.show(this, e.point.x, e.point.y)
+          }
       }
+    }
     target = None
     update()
   }
 
-  def mouseDraggedHandler(p: Point) = {
-    target match {
-      case Some(element: UIElement) =>
-        element.pos.move(p.x, p.y)
-      case _ =>
+  var lastDragPoint: Point = new Point(0, 0)
+  def mouseDraggedHandler(e: MouseDragged) = {
+    if (SwingUtilities.isLeftMouseButton(e.peer))
+      target match {
+        case Some(element: UIElement) =>
+          element.pos.translate(((e.point.x - lastDragPoint.x) * k).toInt, ((e.point.y - lastDragPoint.y) * k).toInt)
+        case _ =>
+      }
+    if (SwingUtilities.isRightMouseButton(e.peer)) {
+      camera.translate(lastDragPoint.x - e.point.x, lastDragPoint.y - e.point.y)
     }
+    lastDragPoint = e.point
     update()
   }
 
@@ -307,13 +316,19 @@ class PetriNetCanvas (var model: Model, var file: Option[File] = None) extends C
       if (k == 1 && e.rotation < 0)
         k += e.rotation.toDouble / 10
       else
-        k += e.rotation.toDouble / 4
+        k += e.rotation
     } else {
       if (k > 0.2 && e.rotation < 0 || e.rotation > 0)
         k += (e.rotation.toDouble / 10)
     }
-    println(s"Wheel moved: ${e.rotation}. k = $k")
     update()
+  }
+
+  def toWorld(p: Point) = {
+    new Point(
+      ((p.x + camera.x) * k).toInt,
+      ((p.y + camera.y) * k).toInt
+    )
   }
 }
 

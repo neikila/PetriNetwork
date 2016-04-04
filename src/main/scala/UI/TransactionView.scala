@@ -28,7 +28,7 @@ class TransactionView (val transaction: Transaction, override val pos: Point = n
     else
       g.setColor(color)
     val rectangle = this.rectangle(k)
-    g.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height)
+    g.fillRect(rectangle.x - camera.x, rectangle.y - camera.y, rectangle.width, rectangle.height)
   }
 
   override def isIn(p: Point): Boolean = {
@@ -54,7 +54,7 @@ class TransactionView (val transaction: Transaction, override val pos: Point = n
 }
 
 object TransactionView {
-  val width = 20
+  val width = 30
   val height = 60
 
   val activeColor = Color.GREEN

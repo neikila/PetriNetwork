@@ -17,7 +17,8 @@ class PlaceView (val place: Place, override var color: Color = Color.BLUE, overr
   override def paint(g: Graphics2D, k: Double = 1, camera: Point = new Point(0, 0)) = {
 
     g.setColor(color)
-    g.fillOval(pos(k).x - radius(k).toInt, pos(k).y - radius(k).toInt, 2 * radius(k).toInt, 2 * radius(k).toInt)
+    g.fillOval(pos(k).x - radius(k).toInt - camera.x, pos(k).y - radius(k).toInt - camera.y,
+      2 * radius(k).toInt, 2 * radius(k).toInt)
 
     g.setColor(Color.BLACK)
     g.setFont(PlaceView.serifFont(k))
@@ -27,8 +28,8 @@ class PlaceView (val place: Place, override var color: Color = Color.BLUE, overr
     val rect = fontMetrics.getStringBounds(marksAmount, g)
 
     g.drawString(marksAmount,
-      (pos(k).x - rect.getWidth / 2).toInt,
-      (pos(k).y + rect.getHeight / 4).toInt
+      (pos(k).x - rect.getWidth / 2 - camera.x).toInt,
+      (pos(k).y + rect.getHeight / 4 - camera.y).toInt
     )
   }
 

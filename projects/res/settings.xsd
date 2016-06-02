@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:element name="settings">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="storageFilename" type="xsd:string"/>
+        <xsd:element name="productsFilename" type="xsd:string"/>
+        <xsd:element name="modelSettings" type="xsd:string"/>
+        <xsd:element name="outputFile" type="xsd:string"/>
+        <xsd:element name="statisticFilename" type="xsd:string"/>
+        <xsd:element name="toConsole" type="xsd:boolean"/>
+        <xsd:element name="isDebug" type="xsd:boolean"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

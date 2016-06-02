@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<possibleProducts xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="possibleProducts.xsd">
+  <product>
+    <productName>stackOfWood</productName>
+    <weightOfSingleProduct>1</weightOfSingleProduct>
+  </product>
+  <product>
+    <productName>metal</productName>
+    <weightOfSingleProduct>1</weightOfSingleProduct>
+  </product>
+  <product>
+    <productName>corn</productName>
+    <weightOfSingleProduct>1</weightOfSingleProduct>
+  </product>
+</possibleProducts>

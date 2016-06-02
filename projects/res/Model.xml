@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<model xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="model.xsd">
+  <deadline>150.0</deadline>
+  <stopGenerating>100.0</stopGenerating>
+  <events>
+    <productIncome>
+      <delta>50</delta>
+      <amount>10</amount>
+    </productIncome>
+    <productRequest>
+      <delta>50</delta>
+    </productRequest>
+  </events>
+</model>

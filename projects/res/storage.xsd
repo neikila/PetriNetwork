@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">  
+  <xsd:element name="storage">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="bounds"/>
+        <xsd:element ref="barriers"/>
+        <xsd:element ref="racks"/>
+        <xsd:element name="entrance" type="gate"/>
+        <xsd:element name="exit" type="gate"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="bounds" type="polygon" />
+
+  <xsd:element name="barriers">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="barrier" minOccurs="0" maxOccurs="unbounded"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="barrier">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="position" type="point" minOccurs="0"/>
+        <xsd:element name="form" type="polygon"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:complexType name="point">
+    <xsd:attribute name="x" type="xsd:double"/>
+    <xsd:attribute name="y" type="xsd:double"/>
+    <xsd:attribute name="metric" default="mm">
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="mm"/>
+          <xsd:enumeration value="m"/>
+          <xsd:enumeration value="in"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <xsd:complexType name="polygon">
+    <xsd:sequence>
+      <xsd:element name="point" type="point" minOccurs="3" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:element name="racks">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="rack" minOccurs="0" maxOccurs="unbounded"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="rack">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="position" type="point"/>
+        <xsd:element name="size" type="point"/>
+        <xsd:element name="levels" type="xsd:integer"/>
+        <xsd:element name="maxWeightPerSection" type="xsd:double"/>
+        <xsd:element name="direction" minOccurs="0">
+          <xsd:simpleType>
+            <xsd:restriction>
+              <xsd:enumeration value="Up"/>
+              <xsd:enumeration value="Down"/>
+              <xsd:enumeration value="Right"/>
+              <xsd:enumeration value="Left"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:complexType name="gate">
+    <xsd:sequence>
+      <xsd:element name="point" minOccurs="2" maxOccurs="2" type="point"/>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>

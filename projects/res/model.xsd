@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:element name="model">
+    <xsd:complexType>
+      <xsd:sequence>
+
+        <xsd:element name="deadline" type="xsd:double"/>
+        <xsd:element name="stopGenerating" type="xsd:double"/>
+
+        <xsd:element name="events">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="productIncome">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="delta" type="positiveDouble"/>
+                    <xsd:element name="amount" type="positiveDouble"/>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="productRequest">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="delta" type="positiveDouble"/>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:simpleType name="positiveDouble">
+    <xsd:restriction base="xsd:double">
+      <xsd:minExclusive value="0" />
+    </xsd:restriction>
+  </xsd:simpleType>
+</xsd:schema>

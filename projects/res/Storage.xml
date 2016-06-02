@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<storage xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="storage.xsd">
+  <bounds>
+    <point x="0" y="0"/>
+    <point x="14000" y="0"/>
+    <point x="14000" y="14000"/>
+    <point x="0" y="14000"/>
+  </bounds>
+  <barriers>
+    <barrier>
+      <form>
+        <point x="2000" y="4000"/>
+        <point x="4000" y="4000"/>
+        <point x="4000" y="6000"/>
+        <point x="2000" y="6000"/>
+      </form>
+    </barrier>
+    <barrier>
+      <form>
+        <point x="10000" y="4000"/>
+        <point x="12000" y="4000"/>
+        <point x="12000" y="6000"/>
+        <point x="10000" y="6000"/>
+      </form>
+    </barrier>
+    <barrier>
+      <form>
+        <point x="2000" y="10000"/>
+        <point x="4000" y="10000"/>
+        <point x="4000" y="12000"/>
+        <point x="2000" y="12000"/>
+      </form>
+    </barrier>
+    <barrier>
+      <position x="10000" y="10000"/>
+      <form>
+        <point x="0" y="0"/>
+        <point x="2000" y="0"/>
+        <point x="2000" y="2000"/>
+        <point x="0" y="2000"/>
+      </form>
+    </barrier>
+  </barriers>
+  <racks>
+    <rack>
+      <position x="2000" y="2000"/>
+      <size x="2000" y="2000"/>
+      <levels>1</levels>
+      <maxWeightPerSection>10</maxWeightPerSection>
+      <direction>Left</direction>
+    </rack>
+    <rack>
+      <position x="4000" y="2000"/>
+      <size x="6000" y="4000"/>
+      <levels>1</levels>
+      <maxWeightPerSection>10</maxWeightPerSection>
+    </rack>
+    <rack>
+      <position x="10000" y="2000"/>
+      <size x="2000" y="2000"/>
+      <levels>1</levels>
+      <maxWeightPerSection>13</maxWeightPerSection>
+    </rack>
+    <rack>
+      <position x="2000" y="8000"/>
+      <size x="2000" y="2000"/>
+      <levels>1</levels>
+      <maxWeightPerSection>1000</maxWeightPerSection>
+    </rack>
+    <rack>
+      <position x="4000" y="8000"/>
+      <size x="6000" y="4000"/>
+      <levels>1</levels>
+      <maxWeightPerSection>10</maxWeightPerSection>
+    </rack>
+    <rack>
+      <position x="10000" y="8000"/>
+      <size x="2000" y="2000"/>
+      <levels>1</levels>
+      <maxWeightPerSection>10</maxWeightPerSection>
+    </rack>
+  </racks>
+  <entrance>
+    <point x="4000" y="14000"/>
+    <point x="10000" y="14000"/>
+  </entrance>
+  <exit>
+    <point x="4000" y="0"/>
+    <point x="10000" y="0"/>
+  </exit>
+</storage>

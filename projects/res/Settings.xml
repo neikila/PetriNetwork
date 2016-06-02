@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<settings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="settings.xsd">
+  <storageFilename>Storage.xml</storageFilename>
+  <productsFilename>PossibleProducts.xml</productsFilename>
+  <modelSettings>Model.xml</modelSettings>
+  <outputFile>output.log</outputFile>
+  <statisticFilename>statistic.xml</statisticFilename>
+  <toConsole>false</toConsole>
+  <isDebug>true</isDebug>
+</settings>

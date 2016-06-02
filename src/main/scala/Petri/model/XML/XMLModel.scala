@@ -1,8 +1,8 @@
-package XML
+package Petri.model.XML
 
 import java.io.{File, FileOutputStream}
 
-import model._
+import Petri.model._
 
 import scala.xml.XML
 

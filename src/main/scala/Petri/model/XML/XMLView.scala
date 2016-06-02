@@ -1,9 +1,9 @@
-package XML
+package Petri.model.XML
 
 import java.awt.Color
 import java.io.{File, FileOutputStream}
 
-import UI.{PetriNetCanvas, PlaceView, TransactionView, UIElement}
+import Petri.model.UI.{PetriNetCanvas, PlaceView, TransactionView, UIElement}
 
 import scala.swing.Point
 import scala.xml._

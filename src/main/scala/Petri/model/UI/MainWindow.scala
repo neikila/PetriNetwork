@@ -1,9 +1,9 @@
-package UI
+package Petri.model.UI
 
 import java.io.File
 
-import XML.{XMLComplex, XMLModel, XMLView}
-import _root_.model.Model
+import Petri.model.XML.{XMLComplex, XMLModel, XMLView}
+import Petri.model.Model
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.swing._

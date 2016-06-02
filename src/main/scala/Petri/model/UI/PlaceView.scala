@@ -1,8 +1,8 @@
-package UI
+package Petri.model.UI
 
 import java.awt.{Font, Color}
 
-import model.Place
+import Petri.model.Place
 
 import scala.swing.{Graphics2D, Point}
 

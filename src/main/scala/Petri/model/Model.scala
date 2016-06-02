@@ -1,6 +1,6 @@
-package model
+package Petri.model
 
-import model.TransactionApplyResult.TransactionApplyResult
+import Petri.model.TransactionApplyResult.TransactionApplyResult
 
 /**
   * Created by neikila.

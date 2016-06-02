@@ -1,4 +1,4 @@
-package model
+package Petri.model
 
 /**
   * Created by neikila.

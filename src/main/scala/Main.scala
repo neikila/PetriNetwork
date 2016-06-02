@@ -1,8 +1,8 @@
 import java.io.File
 
-import UI.MainWindow
-import _root_.XML.XMLComplex
-import model._
+import UIDiplom.MainWindow
+import Petri.model.XML.XMLComplex
+import Petri.model._
 
 import scala.collection.immutable.HashMap
 /**

@@ -1,8 +1,8 @@
-package UI
+package Petri.model.UI
 
 import java.awt.{Rectangle, Color}
 
-import model.Transaction
+import Petri.model.Transaction
 
 import scala.swing.{Graphics2D, Point}
 

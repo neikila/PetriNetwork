@@ -1,12 +1,12 @@
-package UI
+package Petri.model.UI
 
 import java.awt.{Color, Font}
 import java.awt.Color._
 import java.io.File
 import javax.swing.{JPopupMenu, SwingUtilities}
 
-import XML.XMLView
-import model.{Model, P2T, T2P, TransactionApplyResult}
+import Petri.model.XML.XMLView
+import Petri.model.{Model, P2T, T2P, TransactionApplyResult}
 
 import scala.swing.event._
 import scala.swing.{Action, Button, Component, Graphics2D, Menu, MenuItem, Point, PopupMenu, RadioMenuItem}

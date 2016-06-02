@@ -1,4 +1,4 @@
-package UI
+package Petri.model.UI
 
 
 import java.awt.Color

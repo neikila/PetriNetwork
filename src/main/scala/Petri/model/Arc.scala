@@ -1,6 +1,6 @@
-package model
+package Petri.model
 
-import model.Directions.Directions
+import Petri.model.Directions.Directions
 
 /**
   * Created by Neikila on 30.03.2016.

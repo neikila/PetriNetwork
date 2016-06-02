@@ -1,4 +1,4 @@
-package UI
+package Petri.model.UI
 
 import scala.swing.Point
 import math.{sin, cos, toRadians}

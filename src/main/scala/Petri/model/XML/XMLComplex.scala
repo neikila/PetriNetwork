@@ -1,9 +1,9 @@
-package XML
+package Petri.model.XML
 
 import java.io.{File, FileOutputStream}
 
-import UI.PetriNetCanvas
-import model.Model
+import Petri.model.UI.PetriNetCanvas
+import Petri.model.Model
 
 import scala.xml.XML
 
@@ -36,7 +36,7 @@ object XMLComplex {
 
   def openProject(file: File, petriView: PetriNetCanvas) = {
     val xml = XML.loadFile(file)
-    val parser = new XMLModel(new File(file.getParentFile, (xml \\ "model").text))
+    val parser = new XMLModel(new File(file.getParentFile, (xml \\ "Petri/model").text))
 
     val petriNet = new Model(
       parser.places,

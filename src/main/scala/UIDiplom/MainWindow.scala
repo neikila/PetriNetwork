@@ -4,6 +4,7 @@ import java.io.File
 
 import Petri.model.XML.XMLComplex
 import Petri.model.Model
+import UIDiplom.dialogs.ModelSettingsDialog
 import main.Launcher
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -96,25 +97,31 @@ class MainWindow () extends MainFrame {
 //      }
     }
 
-    add(Button("Start modelling") {
-      Future {
-        launcher.init()
-        launcher.start()
-      } onComplete {
-        case Success(_) =>
-          storageView.update()
-        case Failure(error) =>
-          println("A error has occured: " + error.getMessage)
+    val startModellingBtn = Button("Start modelling") {
+        Future {
+          launcher.init()
+          launcher.start()
+        } onComplete {
+          case Success(_) =>
+            storageView.update()
+          case Failure(error) =>
+            println("A error has occured: " + error.getMessage)
+        }
       }
-    }, constraints(2, 0))
 
-    add(saveFileBtn, constraints(2, 1, fill = GridBagPanel.Fill.Horizontal))
-    add(openFileBtn, constraints(2, 2, fill = GridBagPanel.Fill.Horizontal))
+
+    add(saveFileBtn, constraints(2, 0, fill = GridBagPanel.Fill.Horizontal))
+    add(openFileBtn, constraints(2, 1, fill = GridBagPanel.Fill.Horizontal))
+    add(startModellingBtn, constraints(2, 2, fill = GridBagPanel.Fill.Horizontal))
+    add(Button("Modelling settings") { println("Modelling settings"); new ModelSettingsDialog },
+      constraints(2, 3, fill=GridBagPanel.Fill.Horizontal))
+
     add(textField, constraints(0, 0, weightX=1.0, fill=GridBagPanel.Fill.Horizontal))
-    add(storageView, constraints(0, 1, gridHeight=3, weightY = 1,
+    add(storageView, constraints(0, 1, gridHeight=4, weightY = 1,
         fill=GridBagPanel.Fill.Both))
-    add(Button("Close") { sys.exit(0) },
-      constraints(0, 4, gridWidth=3, fill=GridBagPanel.Fill.Horizontal))
+
+//    add(Button("View settings") { println("View settings") },
+//      constraints(2, 6, fill=GridBagPanel.Fill.Horizontal))
   }
 }
 

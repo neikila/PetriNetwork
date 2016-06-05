@@ -6,6 +6,7 @@ import java.io.File
 import javax.swing.SwingUtilities
 
 import Petri.model.XML.XMLView
+import UIDiplom.dialogs.{CreateBarrierDialog, CreateRackDialog}
 import resource.XMLStorageParser
 import storageModel.{Model, Storage}
 import storageModel.storageDetails.{Barrier, Rack}
@@ -20,7 +21,7 @@ import scala.collection.JavaConversions._
 class StorageViewCanvas(var file: Option[File] = None) extends Component {
   import StorageViewCanvas._
 
-  var k: Double = 0.1
+  var k: Double = 0.04
   var camera: Point = new Point(0, 0)
 
   var storageSettings: Option[XMLStorageParser] = None
@@ -39,6 +40,9 @@ class StorageViewCanvas(var file: Option[File] = None) extends Component {
 
     storageSettings match {
       case Some(settings) =>
+        // Закрасить серым фон
+        drawField(g)
+
         // Отобразить все барьеры
         drawBarriers(g)
 
@@ -107,6 +111,14 @@ class StorageViewCanvas(var file: Option[File] = None) extends Component {
     g.setStroke(thin)
   }
 
+  def drawField(g : Graphics2D): Unit = {
+    val xs = points.map(p => (k * p.x).toInt - camera.x).toArray
+    val ys = points.map(p => (k * p.y).toInt - camera.y).toArray
+
+    g.setColor(LIGHT_GRAY)
+    g.fillPolygon(xs, ys, points.length)
+  }
+
   def update() = {
     revalidate
     repaint
@@ -129,30 +141,17 @@ class StorageViewCanvas(var file: Option[File] = None) extends Component {
 
   var clickedPoint: Option[Point] = None
   val createMenu = new PopupMenu {
-    contents += new Menu("Create default") {
-      val place = new MenuItem(Action("Rack") {
-//        placeViews = placeViews :+ new PlaceView(
-//          Petri.model.addPlace(),
-//          placeDefColor,
-//          toWorld(clickedPoint.get))
-//        update()
+    contents += new Menu("Create") {
+      val rack = new MenuItem(Action("Rack") {
+        val dialog = new CreateRackDialog
       })
 
-      val transaction = new MenuItem(Action("Barrier") {
-//        trViews = trViews :+ new TransactionView(
-//          Petri.model.addTransaction(),
-//          toWorld(clickedPoint.get))
-//        update()
+      val barrier = new MenuItem(Action("Barrier") {
+        val dialog = new CreateBarrierDialog
       })
 
-//      var arc = new MenuItem(Action("Arc") {
-//        arcCreation.isActive = true
-//      })
-//      place.tooltip_=("Show dialog to create a place in clicked point")
-
-      contents += place
-      contents += transaction
-//      contents += arc
+      contents += rack
+      contents += barrier
     }
   }
 

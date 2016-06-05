@@ -50,4 +50,11 @@ public class Rack {
     public Section.Direction getDirection() {
         return direction;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Coord: %d:%d; Size = %d:%d", coordinate.x, coordinate.y, size.x, size.y) +
+                String.format("Levels: %d, maxWeight: %f ", levels, maxWeightPerSection) +
+                direction.toString();
+    }
 }

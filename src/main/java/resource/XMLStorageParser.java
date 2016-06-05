@@ -23,20 +23,41 @@ public class XMLStorageParser extends XMLParser {
     public static final String ENTRANCE = "entrance";
     public static final String EXIT = "exit";
 
+    private List<Barrier> barriers;
+    private List<Point> wallPoints;
+    private List<Rack> racks;
+
     public XMLStorageParser(String fileName) {
         super(fileName);
+        barriers = null;
+        wallPoints = null;
+        racks = null;
+    }
+
+    public void addRack(Rack rack) {
+        racks.add(rack);
+    }
+
+    public void addBarrier(Barrier barrier) {
+        barriers.add(barrier);
     }
 
     public List<Barrier> getBarriers() {
-        return getArrayOfSomethingFromElement(root, BARRIERS, this::getBarrier);
+        if (barriers == null)
+            barriers = getArrayOfSomethingFromElement(root, BARRIERS, this::getBarrier);
+        return barriers;
     }
 
     public List<Point> getWallPoints() {
-        return getArrayOfSomethingFromElement(root, BOUNDS, this::getPoint);
+        if (wallPoints == null)
+            wallPoints = getArrayOfSomethingFromElement(root, BOUNDS, this::getPoint);
+        return wallPoints;
     }
 
     public List<Rack> getRacks() {
-        return getArrayOfSomethingFromElement(root, RACKS, this::getRack);
+        if (racks == null)
+            racks = getArrayOfSomethingFromElement(root, RACKS, this::getRack);
+        return racks;
     }
 
     public List<Point> getEntranceBounds() {

@@ -6,6 +6,7 @@ import java.io.File
 import javax.swing.SwingUtilities
 
 import Petri.model.XML.XMLView
+import resource.XMLStorageParser
 import storageModel.{Model, Storage}
 import storageModel.storageDetails.{Barrier, Rack}
 
@@ -22,22 +23,22 @@ class StorageViewCanvas(var file: Option[File] = None) extends Component {
   var k: Double = 0.1
   var camera: Point = new Point(0, 0)
 
-  var modelToShow: Option[Model] = None
+  var storageSettings: Option[XMLStorageParser] = None
 
   val fat = new BasicStroke(3)
   val thin = new BasicStroke(1)
 
-  lazy val racks : List[Rack] = modelToShow.get.getSettings.getStorageSettings.getRacks.toList
-  lazy val barriers : List[Barrier] = modelToShow.get.getSettings.getStorageSettings.getBarriers.toList
+  lazy val racks : List[Rack] = storageSettings.get.getRacks.toList
+  lazy val barriers : List[Barrier] = storageSettings.get.getBarriers.toList
+  lazy val points : List[java.awt.Point] = storageSettings.get.getWallPoints.toList
 
   override def paintComponent(g : Graphics2D) {
     val d = size
     g.setColor(Color.white)
     g.fillRect(0,0, d.width, d.height)
 
-    modelToShow match {
-      case Some(model) =>
-        val storage = model.getStorage
+    storageSettings match {
+      case Some(settings) =>
         // Отобразить все барьеры
         drawBarriers(g)
 
@@ -45,10 +46,10 @@ class StorageViewCanvas(var file: Option[File] = None) extends Component {
         drawRacks(g)
 
         // Отрисовать сетку
-        drawMesh(g, storage)
+        drawMesh(g, Storage.box)
 
         // Отрисовать границы
-        drawBounds(g, storage)
+        drawBounds(g)
 
       case _ =>
         println("model is null")
@@ -73,37 +74,36 @@ class StorageViewCanvas(var file: Option[File] = None) extends Component {
     })
   }
 
-  def drawMesh(g : Graphics2D, storage : Storage): Unit = {
+  def drawMesh(g : Graphics2D, box : java.awt.Point): Unit = {
     val d = size
     g.setColor(BLACK)
-    val offsetX = camera.x % (storage.getBox.x * k)
+    val offsetX = camera.x % (box.x * k)
     var x = -offsetX.toInt
     var i = 0
     while (x < d.width) {
       g.drawLine(x - 1, 0, x - 1, d.height)
       i += 1
-      x = (i * storage.getBox.x * k - offsetX).toInt
+      x = (i * box.x * k - offsetX).toInt
     }
 
 
-    val offsetY = camera.y % (storage.getBox.y * k)
+    val offsetY = camera.y % (box.y * k)
     var y = -offsetY.toInt
     i = 0
     while (y < d.height) {
       g.drawLine(0, y - 1, d.width, y - 1)
       i += 1
-      y = (i * storage.getBox.y * k - offsetY).toInt
+      y = (i * box.y * k - offsetY).toInt
     }
   }
 
-  def drawBounds(g : Graphics2D, storage : Storage): Unit = {
-    val points = storage.getBoundPoints
-    val xs = points.toList.map(p => (k * p.x).toInt - camera.x).toArray
-    val ys = points.toList.map(p => (k * p.y).toInt - camera.y).toArray
+  def drawBounds(g : Graphics2D): Unit = {
+    val xs = points.map(p => (k * p.x).toInt - camera.x).toArray
+    val ys = points.map(p => (k * p.y).toInt - camera.y).toArray
 
     g.setColor(CYAN)
     g.setStroke(fat)
-    g.drawPolygon(xs, ys, points.size())
+    g.drawPolygon(xs, ys, points.length)
     g.setStroke(thin)
   }
 
@@ -127,32 +127,31 @@ class StorageViewCanvas(var file: Option[File] = None) extends Component {
     case e: MouseWheelMoved => wheelRotationHandler(e)
   }
 
-
   var clickedPoint: Option[Point] = None
   val createMenu = new PopupMenu {
     contents += new Menu("Create default") {
-//      val place = new MenuItem(Action("Place") {
+      val place = new MenuItem(Action("Rack") {
 //        placeViews = placeViews :+ new PlaceView(
 //          Petri.model.addPlace(),
 //          placeDefColor,
 //          toWorld(clickedPoint.get))
 //        update()
-//      })
-//
-//      val transaction = new MenuItem(Action("Transition") {
+      })
+
+      val transaction = new MenuItem(Action("Barrier") {
 //        trViews = trViews :+ new TransactionView(
 //          Petri.model.addTransaction(),
 //          toWorld(clickedPoint.get))
 //        update()
-//      })
-//
+      })
+
 //      var arc = new MenuItem(Action("Arc") {
 //        arcCreation.isActive = true
 //      })
-////      place.tooltip_=("Show dialog to create a place in clicked point")
-//
-//      contents += place
-//      contents += transaction
+//      place.tooltip_=("Show dialog to create a place in clicked point")
+
+      contents += place
+      contents += transaction
 //      contents += arc
     }
   }
@@ -266,34 +265,21 @@ class StorageViewCanvas(var file: Option[File] = None) extends Component {
     firstPressed = java.lang.System.currentTimeMillis
   }
 
+  var target: Option[Any] = None
+
   def mouseReleasedHandler(e: MouseReleased) = {
-//    if (java.lang.System.currentTimeMillis - firstPressed < 300) {
-//      if (!arcCreation.isActive)
-//        target match {
-//          case Some(tr: TransactionView) =>
-//            if (tr.transaction.isPossible)
-//              Petri.model.nextWith(tr.transaction) match {
-//                case TransactionApplyResult.Success =>
-//                  Petri.model.enableActTransaction()
-//                  update()
-//                case _ =>
-//              }
-//          case _ =>
-//        }
-//      if (SwingUtilities.isRightMouseButton(e.peer)) {
-//        clickedPoint = Some(e.point)
-//        if (arcCreation.isActive)
-//          cancelMenu.show(this, e.point.x, e.point.y)
-//        else
-//          target match {
-//            case Some(element: UIElement) =>
-//              UIElementMenu.show(this, e.point.x, e.point.y)
-//            case _ =>
-//              createMenu.show(this, e.point.x, e.point.y)
-//          }
-//      }
-//    }
-//    target = None
+    if (java.lang.System.currentTimeMillis - firstPressed < 300) {
+      if (SwingUtilities.isRightMouseButton(e.peer)) {
+        clickedPoint = Some(e.point)
+        target match {
+          case Some(element) =>
+            UIElementMenu.show(this, e.point.x, e.point.y)
+          case _ =>
+            createMenu.show(this, e.point.x, e.point.y)
+        }
+      }
+    }
+    target = None
     update()
   }
 

@@ -21,17 +21,25 @@ public class Launcher {
         return model;
     }
 
-    public static void main(String[] args)  throws Exception {
-        new Launcher().init(args).start();
+    public Settings getSettings() {
+        return settings;
     }
 
-    public Launcher init(String[] args) {
+    public static void main(String[] args)  throws Exception {
+        new Launcher().readSettings(args).init().start();
+    }
+
+    public Launcher readSettings(String[] args) {
         String settingsXML = DEFAULT_SETTING_LOCATION;
         if (args.length == 1) {
             settingsXML = args[0];
         }
         settings = new Settings(settingsXML);
         System.out.println("Settings was read from " + settingsXML);
+        return this;
+    }
+
+    public Launcher init() {
         model = new Model(settings);
         return this;
     }

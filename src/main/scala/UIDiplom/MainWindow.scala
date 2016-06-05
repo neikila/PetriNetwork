@@ -20,7 +20,7 @@ class MainWindow () extends MainFrame {
   var launcher: Launcher = null
   def model = launcher.getModel
 
-  preferredSize = new Dimension(640, 480)
+  preferredSize = new Dimension(1000, 750)
 
   contents = new GridBagPanel { grid =>
     def constraints(x: Int, y: Int,
@@ -64,10 +64,10 @@ class MainWindow () extends MainFrame {
     val openFileBtn: Button = Button("Open project") {
       Future {
         launcher = new Launcher()
-        launcher.init(new Array[String](0))
+        launcher.readSettings(new Array[String](0))
       } onComplete {
         case Success(_) =>
-          storageView.modelToShow = Some(model)
+          storageView.storageSettings = Some(launcher.getSettings.getStorageSettings)
           storageView.update()
           println("Open and drew storage")
 //          println(s"Filename = ${fileChooser.selectedFile.getCanonicalPath}")
@@ -98,6 +98,7 @@ class MainWindow () extends MainFrame {
 
     add(Button("Start modelling") {
       Future {
+        launcher.init()
         launcher.start()
       } onComplete {
         case Success(_) =>
@@ -106,8 +107,6 @@ class MainWindow () extends MainFrame {
           println("A error has occured: " + error.getMessage)
       }
     }, constraints(2, 0))
-
-
 
     add(saveFileBtn, constraints(2, 1, fill = GridBagPanel.Fill.Horizontal))
     add(openFileBtn, constraints(2, 2, fill = GridBagPanel.Fill.Horizontal))

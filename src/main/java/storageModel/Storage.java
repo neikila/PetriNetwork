@@ -17,14 +17,13 @@ public class Storage {
     private List<Point> boundPoints;
     private List<Barrier> barriers;
     private List<Section> sections;
-    private Point box;
+    public static final Point box = new Point(2000, 2000);
     private GraphOfWays graph;
     private Gates entrance;
     private Gates exit;
 
     public Storage(Settings settings) {
         XMLStorageParser storageSettings = settings.getStorageSettings();
-        box = new Point(2000, 2000);
         this.boundPoints = storageSettings.getWallPoints();
         this.barriers = storageSettings.getBarriers();
         this.sections = new ArrayList<>();

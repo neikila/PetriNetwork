@@ -20,27 +20,27 @@ class CreateRackDialog extends Dialog {
   val levels = new TextField
   val direction = new TextField
 
-  title = "Create rack"
+  title = "Создание стеллажа"
   modal = true
 
   contents = new BorderPanel {
     layout(new BoxPanel(Orientation.Vertical) {
       border = Swing.EmptyBorder(5,5,5,5)
 
-      contents += new Label("Size")
+      contents += new Label("Размер")
       contents += rackSize
-      contents += new Label("Max weight")
+      contents += new Label("Предельный вес")
       contents += maxWeight
-      contents += new Label("Levels")
+      contents += new Label("Количество уровней")
       contents += levels
-      contents += new Label("Direction")
+      contents += new Label("Направление доступа")
       contents += direction
     }) = Center
 
     preferredSize = new Dimension(200, 200)
 
     layout(new FlowPanel(FlowPanel.Alignment.Right)(
-      Button("Create") {
+      Button("Применить") {
         if (isCorrect) {
           val tmp = rackSize.text.split(Array(',', ';', ' ', ':'))
           rack = if (direction.text.length != 0) {

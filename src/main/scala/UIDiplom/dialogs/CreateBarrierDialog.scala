@@ -17,7 +17,7 @@ class CreateBarrierDialog extends Dialog {
 
   val barrierSize = new TextField
 
-  title = "Create barrier"
+  title = "Создание преграды"
   modal = true
 
   contents = new BorderPanel {
@@ -31,7 +31,7 @@ class CreateBarrierDialog extends Dialog {
     preferredSize = new Dimension(200, 85)
 
     layout(new FlowPanel(FlowPanel.Alignment.Right)(
-      Button("Create") {
+      Button("Применить") {
         if (isCorrect) {
           close()
         } else {

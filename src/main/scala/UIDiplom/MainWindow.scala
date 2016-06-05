@@ -3,7 +3,6 @@ package UIDiplom
 import java.io.File
 
 import Petri.model.XML.XMLComplex
-import Petri.model.Model
 import UIDiplom.dialogs.ModelSettingsDialog
 import main.Launcher
 
@@ -41,7 +40,7 @@ class MainWindow () extends MainFrame {
 
     val storageView = new StorageViewCanvas()
     val textField = new TextField { columns = 32 }
-    val saveFileBtn: Button = Button("Save project") {
+    val saveFileBtn: Button = Button("Сохранить проект") {
       val fileChooser = new FileChooser()
       if (new File(XMLComplex.defaultProjectsDirectory).exists())
         fileChooser.peer.setCurrentDirectory(new File(XMLComplex.defaultProjectsDirectory))
@@ -62,7 +61,13 @@ class MainWindow () extends MainFrame {
       }
     }
 
-    val openFileBtn: Button = Button("Open project") {
+    val openFileBtn: Button = Button("Открыть проект") {
+      val fileChooser = new FileChooser()
+      if (new File(XMLComplex.defaultProjectsDirectory).exists())
+        fileChooser.peer.setCurrentDirectory(new File(XMLComplex.defaultProjectsDirectory))
+      else
+        fileChooser.peer.setCurrentDirectory(new File("."))
+      fileChooser.showOpenDialog(grid)
       Future {
         launcher = new Launcher()
         launcher.readSettings(new Array[String](0))
@@ -76,12 +81,6 @@ class MainWindow () extends MainFrame {
         case Failure(error) =>
           println("A error has occured: " + error.getMessage)
       }
-//      val fileChooser = new FileChooser()
-//      if (new File(XMLComplex.defaultProjectsDirectory).exists())
-//        fileChooser.peer.setCurrentDirectory(new File(XMLComplex.defaultProjectsDirectory))
-//      else
-//        fileChooser.peer.setCurrentDirectory(new File("."))
-//      fileChooser.showOpenDialog(grid)
 //      if (fileChooser.selectedFile != null) {
 //        val filename = fileChooser.selectedFile.getName
 //        textField.text = filename
@@ -97,7 +96,7 @@ class MainWindow () extends MainFrame {
 //      }
     }
 
-    val startModellingBtn = Button("Start modelling") {
+    val startModellingBtn = Button("Запустить моделирование") {
         Future {
           launcher.init()
           launcher.start()
@@ -113,7 +112,7 @@ class MainWindow () extends MainFrame {
     add(saveFileBtn, constraints(2, 0, fill = GridBagPanel.Fill.Horizontal))
     add(openFileBtn, constraints(2, 1, fill = GridBagPanel.Fill.Horizontal))
     add(startModellingBtn, constraints(2, 2, fill = GridBagPanel.Fill.Horizontal))
-    add(Button("Modelling settings") { println("Modelling settings"); new ModelSettingsDialog },
+    add(Button("Настройки моделлирования") { println("Modelling settings"); new ModelSettingsDialog },
       constraints(2, 3, fill=GridBagPanel.Fill.Horizontal))
 
     add(textField, constraints(0, 0, weightX=1.0, fill=GridBagPanel.Fill.Horizontal))

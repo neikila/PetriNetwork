@@ -12,7 +12,7 @@ import storageModel.{Model, Storage}
 import storageModel.storageDetails.{Barrier, Rack}
 
 import scala.swing.event._
-import scala.swing.{Action, Component, Graphics2D, Menu, MenuItem, Point, PopupMenu}
+import scala.swing.{Action, Component, Graphics2D, Menu, MenuItem, Point, PopupMenu, Swing}
 import scala.collection.JavaConversions._
 
 /**
@@ -32,6 +32,8 @@ class StorageViewCanvas(var file: Option[File] = None) extends Component {
   lazy val racks : List[Rack] = storageSettings.get.getRacks.toList
   lazy val barriers : List[Barrier] = storageSettings.get.getBarriers.toList
   lazy val points : List[java.awt.Point] = storageSettings.get.getWallPoints.toList
+
+  border = Swing.LineBorder(BLACK)
 
   override def paintComponent(g : Graphics2D) {
     val d = size
@@ -56,6 +58,8 @@ class StorageViewCanvas(var file: Option[File] = None) extends Component {
         drawBounds(g)
 
       case _ =>
+        // Отрисовать сетку
+        drawMesh(g, Storage.box)
         println("model is null")
     }
   }
@@ -141,12 +145,12 @@ class StorageViewCanvas(var file: Option[File] = None) extends Component {
 
   var clickedPoint: Option[Point] = None
   val createMenu = new PopupMenu {
-    contents += new Menu("Create") {
-      val rack = new MenuItem(Action("Rack") {
+    contents += new Menu("Создать") {
+      val rack = new MenuItem(Action("Стеллаж") {
         val dialog = new CreateRackDialog
       })
 
-      val barrier = new MenuItem(Action("Barrier") {
+      val barrier = new MenuItem(Action("Преграду") {
         val dialog = new CreateBarrierDialog
       })
 

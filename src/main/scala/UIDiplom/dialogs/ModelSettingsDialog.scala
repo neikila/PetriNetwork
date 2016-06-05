@@ -1,10 +1,5 @@
 package UIDiplom.dialogs
 
-import java.awt
-
-import storageModel.Storage
-import storageModel.storageDetails.{Rack, Section}
-
 import scala.swing.BorderPanel.Position._
 import scala.swing._
 
@@ -20,29 +15,29 @@ class ModelSettingsDialog extends Dialog {
   val consoleOutput = new TextField
   val debugMessageOn = new TextField
 
-  title = "Modelling settings"
+  title = "Настройки модели"
   modal = true
 
   contents = new BorderPanel {
     layout(new BoxPanel(Orientation.Vertical) {
       border = Swing.EmptyBorder(5,5,5,5)
 
-      contents += new Label("Experiment amount")
+      contents += new Label("Количество экспериментов")
       contents += experimentAmount
-      contents += new Label("Threads using")
+      contents += new Label("Количество потоков")
       contents += threadsAmount
-      contents += new Label("Deadline")
+      contents += new Label("Время моделирования")
       contents += deadline
-      contents += new Label("Console output")
+      contents += new Label("Вывод в консоль")
       contents += consoleOutput
-      contents += new Label("Show debug message")
+      contents += new Label("Показ отладочных сообщений")
       contents += debugMessageOn
     }) = Center
 
     preferredSize = new Dimension(300, 250)
 
     layout(new FlowPanel(FlowPanel.Alignment.Right)(
-      Button("Create") {
+      Button("Применить") {
         if (isCorrect) {
           close()
         } else {
